@@ -13,6 +13,10 @@ log("Plugin getSelectionMXMLG started...");
 
 // var test = selection.firstObject().style().fills().firstObject().color().hexValue();
 
+/***************
+* OBJECTS
+*************** */
+
 // gestionnaire de tabulation
 var T = {
 	value:0,
@@ -26,7 +30,55 @@ var T = {
 			return t; },
 }
 
-var tabCount = 0;
+var clipboard = {
+	board: NSPasteboard.generalPasteboard(),
+
+	copy:function( value )
+	{
+		this.board.declareTypes_owner( [ NSPasteboardTypeString ], null );
+		this.board.setString_forType( value , NSPasteboardTypeString );	
+	}
+}
+
+/***************
+* FUNCTIONS
+*************** */
+
+function getMXML(layer)
+{
+	log( "getMXML" );
+
+	// rect coord
+	var item = [layer frame];
+	var rect = getItemRect(item);
+
+	// <
+	var itML = "<s:Rect ";
+	itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
+	
+	// styles
+	var itemStyle = [layer style];
+	itML += getOpacityAttribute(itemStyle);
+	itML += getRadiusAttribute(layer);
+
+	// Rect>
+	itML += " >\n";
+	T.add();
+
+	// stroke
+	var itemBorders = [itemStyle borders];	
+	itML += getStrokeNode( itemBorders[0]);
+
+	// fill
+	var itemFills = [itemStyle fills];
+	itML += getFillNode( itemFills[0]);
+	T.rm();
+
+	// </
+	itML += "</s:Rect>";
+
+	return itML;
+}
 
 function getItemRect( item )
 {
@@ -39,6 +91,27 @@ function getItemRect( item )
 	return rect;
 }
 
+function getOpacityAttribute( style )
+{
+	log("getOpacityAttribute()..." );
+	
+	var gfxContext = [style contextSettings];
+	var o = [gfxContext opacity];
+	log("Opacity : " + o );
+	
+	return " alpha=\"" + o + "\" ";
+}
+
+function getRadiusAttribute(layer)
+{
+	log("getRadiusAttribute()...");
+	var radius = [[[layer layers] firstObject] fixedRadius];
+	var rd = " radiusX=\"" + radius + "\" ";
+	rd += " radiusY=\"" + radius + "\" ";
+	log("radius : " + radius );
+	
+	return rd;
+}
 
 
 function getStrokeNode(border)
@@ -92,63 +165,15 @@ function getFillNode(fill)
 	return fillChain;
 }
 
-function getMXML(layer)
-{
-	log( "getMXML" );
-	var item = [layer frame];
-	var itemStyle = [layer style];
-
-	// rect coord
-	var rect = getItemRect(item);
-	var itML = "<s:Rect ";
-	itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
-	
-	// styles
-	itML += getOpacityAttribute(itemStyle);
-	itML += getRadiusNode(layer);
-
-	// Rect>
-	itML += " >\n";
-	T.add();
-
-	var itemBorders = [itemStyle borders];	
-	itML += getStrokeNode( itemBorders[0]);
-
-	var itemFills = [itemStyle fills];
-	itML += getFillNode( itemFills[0]);
-	T.rm();
-	itML += "</s:Rect>";
-
-	return itML;
-}
-
-function getOpacityAttribute( style )
-{
-	log("getOpacityAttribute()..." );
-	
-	var gfxContext = [style contextSettings];
-	var o = [gfxContext opacity];
-	log("Opacity : " + o );
-	
-	return " alpha=\"" + o + "\" ";
-}
-
-function getRadiusNode(layer)
-{
-	log("getRadiusNode()...");
-	var radius = [[[layer layers] firstObject] fixedRadius];
-	var rd = " radiusX=\"" + radius + "\" ";
-	rd += " radiusY=\"" + radius + "\" ";
-	log("radius : " + radius );
-	
-	return rd;
-}
-
+/*
+* EXPORT LES ITEMS DE LA SELECTION
+*/
 for (var i=0; i<selection.length(); i++) {
 	var layer = selection[i];
 
 	var res = getMXML(layer)
 
+	clipboard.copy( res );
 	log(res);
 
- }
+}
