@@ -1,102 +1,142 @@
 // (ctrl alt cmd f)
 log("getSelectionMXMLG");
 
+// var test = selection.firstObject().style().fills().firstObject().color().hexValue();
+var T = {
+	value:0,
+
+	add:function(){ this.value ++ ;},
+
+	rm:function(){ this.value --  ;},
+
+	tab:function(){
+			var t = "";
+			for(var i = 0 ; i < this.value ; i++){
+				t += "\t";
+			}
+			return t; },
+}
+
 var tabCount = 0;
 
 function getItemRect( item )
 {
-  var rect = {};
-  rect.width = [item width];
-  rect.height = [item height];
-  
-  rect.x = [item x];
-  rect.y = [item y];
-  return rect;
+	var rect = {};
+	rect.width = [item width];
+	rect.height = [item height];
+
+	rect.x = [item x];
+	rect.y = [item y];
+	return rect;
 }
 
-function tab()
-{
-  var t = "";
-  for(var i = 0 ; i < tabCount ; i++)
-  {
-    t += "\t";
-  }
-  return t;
-}
+
 
 function getStrokeNode(border)
 {
-  tabCount++;
-  var strokeChain = tab() + "<s:stroke>\n";
-  
-  log("getStrokeNode...");
-  log("border color : " + [[border color]red]);
-  
-  var borderType = [border fillType];
-  
-  if( borderType == 0 )
-  {
-    var borderColor = [border color];
-    var hexColor = borderColor.hexValue();
-    log('hexValue : ' + hexColor);
+	log("getStrokeNode...");
+	var strokeChain = T.tab() + "<s:stroke>\n";
+	var borderType = [border fillType];
 
-    tabCount++;
-    strokeChain += tab() + "<s:SolidStrokeColor color=\"#" + hexColor + "\" ";
-    var colorAlpha = [borderColor alpha];
-    strokeChain += " alpha=\""+ colorAlpha +"\" ";
-    strokeChain += "/>\n";
-    tabCount--;
-    strokeChain += tab() + "</s:stroke>\n";
-  }
-  
-  return strokeChain;
+	if( borderType == 0 ){
+		var borderColor = [border color];
+		var hexColor = [borderColor hexValue];
+		log('hexValue : ' + hexColor);
+
+		T.add();
+		strokeChain += T.tab() + "<s:SolidColorStroke color=\"#" + hexColor + "\" ";
+		var colorAlpha = [borderColor alpha];
+		log('alpha : ' + colorAlpha );
+		strokeChain += " alpha=\""+ colorAlpha +"\" ";
+		strokeChain += "/>\n";
+		T.rm();
+		strokeChain += T.tab() + "</s:stroke>\n";
+	}
+
+	return strokeChain;
+}
+
+
+function getFillNode(fill)
+{
+	log("getFillNode...");
+
+	var fillChain = T.tab() + "<s:fill>\n";
+	var fillType = [fill fillType];
+
+	if( fillType == 0 )
+	{
+		var fillColor = [fill color];
+		var hexColor = [fillColor hexValue];
+		log('hexValue : ' + hexColor);
+
+		T.add();
+		fillChain += T.tab() + "<s:SolidColor color=\"#" + hexColor + "\" ";
+		var colorAlpha = [fillColor alpha];
+		log('colorAlpha : ' + colorAlpha);
+		fillChain += " alpha=\""+ colorAlpha +"\" ";
+		fillChain += "/>\n";
+		T.rm();
+		fillChain += T.tab() + "</s:fill>\n";
+	}
+
+	return fillChain;
+}
+
+function getMXML(layer)
+{
+	var item = [layer frame];
+
+		// rect coord
+	var rect = getItemRect(item);
+	var itML = "<s:Rect ";
+	itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
+	log(itML);
+
+	/*
+	 styles
+	 */
+
+	var itemStyle = [layer style];
+
+//  log(item);
+
+	// opacity
+	var gfxContext = [itemStyle contextSettings];
+	var itemOpacity = [gfxContext opacity];
+	log("itemOpacity" + itemOpacity );
+	itML += " alpha=\"" + itemOpacity + "\" ";
+
+	itML += getRadius(layer);
+	itML += " >\n";
+
+	T.add();
+	var itemBorders = [itemStyle borders];	
+	itML += getStrokeNode( itemBorders[0]);
+
+	var itemFills = [itemStyle fills];
+	itML += getFillNode( itemFills[0]);
+	T.rm();
+	itML += "</s:Rect>";
+
+	return itML;
+}
+
+function getRadius(layer)
+{
+	log("getRadius()...");
+	var radius = [[[layer layers] firstObject] fixedRadius];
+	var r = " radiusX=\"" + radius + "\" ";
+	r += " radiusY=\"" + radius + "\" ";
+	
+	return r;
 }
 
 for (var i=0; i<selection.length(); i++) {
-  var layer = selection[i];
-  
-  var item = [layer frame];
-  
-    // rect coord
-  var rect = getItemRect(item);
-  var itML = "<s:Rect ";
-  itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
-  log(itML);
-  
-    /*
-     styles
-     */
-     
-     var itemStyle = [layer style];
-     
-//  log(item);
-     
-    // opacity
-     var gfxContext = [itemStyle contextSettings];
-     var itemOpacity = [gfxContext opacity];
-     log("itemOpacity" + itemOpacity );
-     itML += " alpha=\"" + itemOpacity + "\" ";
-     
-     var radius = [[[layer layers] firstObject] fixedRadius];
-     log("radius : " + radius);
-     itML += " radiusX=\"" + radius + "\" ";
-     itML += " radiusY=\"" + radius + "\" ";
-     
-     itML += " >\n";
-    /*
-     // fills
-    */
-    // strokes
-     var itemBorders = [itemStyle borders];
+	var layer = selection[i];
 
-    //var numBorders = itemBorders.length();
-    //log("itemNumBorders=\"" + numBorders + "\"");
-     
-     itML += getStrokeNode( itemBorders[0]);
-     
-     itML += " </s:Rect>";
-     
-     log(itML);
-     
-     
-   }
+	var res = getMXML(layer)
+
+	log(res);
+
+ }
