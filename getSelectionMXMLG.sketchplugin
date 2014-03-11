@@ -1,0 +1,102 @@
+// (ctrl alt cmd f)
+log("getSelectionMXMLG");
+
+var tabCount = 0;
+
+function getItemRect( item )
+{
+  var rect = {};
+  rect.width = [item width];
+  rect.height = [item height];
+  
+  rect.x = [item x];
+  rect.y = [item y];
+  return rect;
+}
+
+function tab()
+{
+  var t = "";
+  for(var i = 0 ; i < tabCount ; i++)
+  {
+    t += "\t";
+  }
+  return t;
+}
+
+function getStrokeNode(border)
+{
+  tabCount++;
+  var strokeChain = tab() + "<s:stroke>\n";
+  
+  log("getStrokeNode...");
+  log("border color : " + [[border color]red]);
+  
+  var borderType = [border fillType];
+  
+  if( borderType == 0 )
+  {
+    var borderColor = [border color];
+    var hexColor = borderColor.hexValue();
+    log('hexValue : ' + hexColor);
+
+    tabCount++;
+    strokeChain += tab() + "<s:SolidStrokeColor color=\"#" + hexColor + "\" ";
+    var colorAlpha = [borderColor alpha];
+    strokeChain += " alpha=\""+ colorAlpha +"\" ";
+    strokeChain += "/>\n";
+    tabCount--;
+    strokeChain += tab() + "</s:stroke>\n";
+  }
+  
+  return strokeChain;
+}
+
+for (var i=0; i<selection.length(); i++) {
+  var layer = selection[i];
+  
+  var item = [layer frame];
+  
+    // rect coord
+  var rect = getItemRect(item);
+  var itML = "<s:Rect ";
+  itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
+  log(itML);
+  
+    /*
+     styles
+     */
+     
+     var itemStyle = [layer style];
+     
+//  log(item);
+     
+    // opacity
+     var gfxContext = [itemStyle contextSettings];
+     var itemOpacity = [gfxContext opacity];
+     log("itemOpacity" + itemOpacity );
+     itML += " alpha=\"" + itemOpacity + "\" ";
+     
+     var radius = [[[layer layers] firstObject] fixedRadius];
+     log("radius : " + radius);
+     itML += " radiusX=\"" + radius + "\" ";
+     itML += " radiusY=\"" + radius + "\" ";
+     
+     itML += " >\n";
+    /*
+     // fills
+    */
+    // strokes
+     var itemBorders = [itemStyle borders];
+
+    //var numBorders = itemBorders.length();
+    //log("itemNumBorders=\"" + numBorders + "\"");
+     
+     itML += getStrokeNode( itemBorders[0]);
+     
+     itML += " </s:Rect>";
+     
+     log(itML);
+     
+     
+   }

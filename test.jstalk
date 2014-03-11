@@ -1,0 +1,13 @@
+//(ctrl alt cmd t)
+//var myColor  = [UIColor brownColor];
+//var components = CGColorGetComponents([myColor CGColor]);
+var test = selection.firstObject().style().fills().firstObject().color().hexValue();
+//NSColor *convertedColor = [self colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+log(selection.firstObject().style().fills().firstObject().color().alpha());
+/*
+const CGFloat* components;
+components = CGColorGetComponents(myColor.CGColor);
+NSLog(@"%f, %f, %f, %f", components[0],components[1],components[2],components[3]);
+NSLog(@"%X, %X, %X, %X", (char)(255*components[0]), (char)(255*components[1]), (char)(255*components[2]), (char)(255*components[3]));
+int hexValue = 0xFF0000*components[0] + 0xFF00*components[1] + 0xFF*components[2]; 
+*/
