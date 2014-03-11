@@ -1,14 +1,23 @@
-// (ctrl alt cmd f)
-log("getSelectionMXMLG");
+// Selection to MXMLG (ctrl alt cmd f)
+
+/*
+* allow you export MXML skin for Apache Flex spark Button
+* DONE :
+* rect, alpha, radius, fill0, border0
+* 
+* TODO :
+* - 
+* 
+*/
+log("Plugin getSelectionMXMLG started...");
 
 // var test = selection.firstObject().style().fills().firstObject().color().hexValue();
+
+// gestionnaire de tabulation
 var T = {
 	value:0,
-
 	add:function(){ this.value ++ ;},
-
 	rm:function(){ this.value --  ;},
-
 	tab:function(){
 			var t = "";
 			for(var i = 0 ; i < this.value ; i++){
@@ -85,32 +94,23 @@ function getFillNode(fill)
 
 function getMXML(layer)
 {
+	log( "getMXML" );
 	var item = [layer frame];
+	var itemStyle = [layer style];
 
-		// rect coord
+	// rect coord
 	var rect = getItemRect(item);
 	var itML = "<s:Rect ";
 	itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
-	log(itML);
+	
+	// styles
+	itML += getOpacityAttribute(itemStyle);
+	itML += getRadiusNode(layer);
 
-	/*
-	 styles
-	 */
-
-	var itemStyle = [layer style];
-
-//  log(item);
-
-	// opacity
-	var gfxContext = [itemStyle contextSettings];
-	var itemOpacity = [gfxContext opacity];
-	log("itemOpacity" + itemOpacity );
-	itML += " alpha=\"" + itemOpacity + "\" ";
-
-	itML += getRadius(layer);
+	// Rect>
 	itML += " >\n";
-
 	T.add();
+
 	var itemBorders = [itemStyle borders];	
 	itML += getStrokeNode( itemBorders[0]);
 
@@ -122,14 +122,26 @@ function getMXML(layer)
 	return itML;
 }
 
-function getRadius(layer)
+function getOpacityAttribute( style )
 {
-	log("getRadius()...");
-	var radius = [[[layer layers] firstObject] fixedRadius];
-	var r = " radiusX=\"" + radius + "\" ";
-	r += " radiusY=\"" + radius + "\" ";
+	log("getOpacityAttribute()..." );
 	
-	return r;
+	var gfxContext = [style contextSettings];
+	var o = [gfxContext opacity];
+	log("Opacity : " + o );
+	
+	return " alpha=\"" + o + "\" ";
+}
+
+function getRadiusNode(layer)
+{
+	log("getRadiusNode()...");
+	var radius = [[[layer layers] firstObject] fixedRadius];
+	var rd = " radiusX=\"" + radius + "\" ";
+	rd += " radiusY=\"" + radius + "\" ";
+	log("radius : " + radius );
+	
+	return rd;
 }
 
 for (var i=0; i<selection.length(); i++) {
