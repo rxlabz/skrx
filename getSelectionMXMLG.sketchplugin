@@ -5,9 +5,9 @@
 * DONE :
 * - rect, alpha, radius, fill0, border0
 * - clipboard
-* - localPosAlert
+* - setLocalPositionAlert
 
-* » localPos
+* » setLocalPosition
 
 * TODO :
 * - gradients
@@ -20,9 +20,6 @@
 log("Plugin getSelectionMXMLG started...");
 
 // var test = selection.firstObject().style().fills().firstObject().color().hexValue();
-
-
-var useLocalPos;
 
 /***************
 * OBJECTS
@@ -85,13 +82,13 @@ var Al = {
 /*
 * returns MXML description of a layer / shape / Rectangle
 */
-function getMXML(layer, localPos)
+function getMXML(layer, setLocalPosition)
 {
-	log( "getMXML" );
+	log( "getMXML()..." );
 
 	// rect coord
 	var item = [layer frame];
-	var rect = getItemRect(item, localPos);
+	var rect = getItemRect(item, setLocalPosition);
 
 	// <
 	var itML = "<s:Rect ";
@@ -124,14 +121,14 @@ function getMXML(layer, localPos)
 /*
 * item rect coordinates
 */
-function getItemRect( item , localPos)
+function getItemRect( item , setLocalPosition)
 {
 	var rect = {};
 	rect.width = [item width];
 	rect.height = [item height];
 
-	rect.x = localPos ? 0 : [item x];
-	rect.y = localPos ? 0 : [item y];
+	rect.x = setLocalPosition ? 0 : [item x];
+	rect.y = setLocalPosition ? 0 : [item y];
 	return rect;
 }
 
@@ -212,29 +209,94 @@ function getFillNode(fill)
 
 		fillChain += _ND;
 		T.rm();
-		fillChain += T.tab() + "</s:fill>\n";
+		
 	} else if( fillType == 1 ) // gradient
 	{
-
+		var gradient = [fill gradient];
+		fillChain += getLinearGradientNode(gradient);		
+	} else {
+		log("!!! ERROR !!!")
 	}
+
+	fillChain += T.tab() + "</s:fill>\n";	
 
 	return fillChain;
 }
 
-var localPos;
+/**
+* 
+	<s:LinearGradient rotation="90" >
+		<s:GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
+		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
+	</s:LinearGradient>
+*/
+
+function getLinearGradientNode(gradient)
+{
+	log("getLinearGradientNode()...");
+
+	var lg = "<s:LinearGradient>\n";
+	T.add();
+
+	lg += getLinearGradientEntriesNodes(gradient);
+
+	T.rm();
+	lg += "</s:LinearGradient>\n";
+
+	log(lg);
+	return lg;
+}
+
+function getLinearGradientEntriesNodes(gradient)
+{
+	log("getLinearGradientEntriesNodes()...");
+	var entries = '';
+	var gradientEntries = [gradient stops];
+	var numEntries = gradientEntries.length();
+	log("numEntries : " + numEntries);
+	
+	for( var i = 0 ; i < numEntries ; i++)
+	{
+		entry = gradientEntries[i];
+		var entryColor = [[entry color] hexValue];
+		log("entry hex : " + entryColor);
+		entries += T.tab() +  "<s:GradientEntry color=\"#" + entryColor + "\" ";
+
+		var entryPos = [entry position];
+		log("entry pos : " + entryPos);
+		entries += "ratio=\"" + entryPos+ "\" ";
+
+		var entryAlpha = [[entry color] alpha];
+		log("entry alpha : " + entryAlpha);
+		entries += "alpha=\"" + entryAlpha + "\" />";
+	}
+	
+	log(entries);
+
+	return entries;
+}
+
+// 
+
+/*
+* COORDINATES POS
+*/
+var setLocalPosition;
+var LOCAL_POS_INFO = "Coordonnées locales : origine x,y = coin haut gauche de la selection";
+var LOCAL_POS_TITLE = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
+setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
+
 /*
 * EXPORT LES ITEMS DE LA SELECTION
 */
-var alertInfo = "Coordonnées locales : origine x,y = coin haut gauche de la selection";
-var alertTitle = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
-for (var i=0; i<selection.length(); i++) {
-	localPos = Al.show( "Oui", "Non", alertTitle, alertInfo);
 
-	log("localPos : " + localPos);
+for (var i=0; i<selection.length(); i++) {
+
+	log("setLocalPosition : " + setLocalPosition);
 
 	var layer = selection[i];
 
-	var res = getMXML(layer, localPos);
+	var res = getMXML(layer, setLocalPosition);
 
 	clipboard.copy( res );
 
