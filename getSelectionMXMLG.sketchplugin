@@ -2,24 +2,19 @@
 
 /*
 * allow you export MXML skin for Apache Flex spark Button
-* DONE :
-* - rect, alpha, radius, fill0, border0
-* - clipboard
-* - setLocalPositionAlert
-
-* » setLocalPosition
+*
+»»» current :
+* - linearStrokes 
 
 * TODO :
-* - gradients
 * - multistates
+* - radialGradient fill
 * - lines, path, ellipse
 * - img ( icons )
 * - multi-resolution
 * 
 */
 log("Plugin getSelectionMXMLG started...");
-
-// var test = selection.firstObject().style().fills().firstObject().color().hexValue();
 
 /***************
 * OBJECTS
