@@ -49,6 +49,25 @@ var clipboard = {
 	}
 }
 
+/**
+* gestionnaire d'alerte
+*/
+var Al = {
+	show:function( bt1Label, bt2Label, title, info ){
+		var alert = [[NSAlert alloc] init];
+		[alert addButtonWithTitle:bt1Label];
+		[alert addButtonWithTitle:bt2Label];
+		[alert setMessageText:title];
+		[alert setInformativeText:info];
+		[alert setAlertStyle:NSWarningAlertStyle];		
+
+		var choice = [alert runModal];
+		[alert release];
+		return choice == NSAlertFirstButtonReturn ? 1 : 2;
+	}
+};
+
+
 /***************
 * FUNCTIONS
 *************** */
@@ -171,7 +190,7 @@ function getFillNode(fill)
 	var fillChain = T.tab() + "<s:fill>\n";
 	var fillType = [fill fillType];
 
-	if( fillType == 0 )
+	if( fillType == 0 ) // solid color
 	{
 		var fillColor = [fill color];
 		var hexColor = [fillColor hexValue];
@@ -184,20 +203,31 @@ function getFillNode(fill)
 		fillChain += _ND;
 		T.rm();
 		fillChain += T.tab() + "</s:fill>\n";
+	} else if( fillType == 1 ) // gradient
+	{
+
 	}
 
 	return fillChain;
 }
 
+var localPos;
 /*
 * EXPORT LES ITEMS DE LA SELECTION
 */
+var alertInfo = "Coordonnées locales : origine x,y = coin haut gauche de la selection";
+var alertTitle = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
 for (var i=0; i<selection.length(); i++) {
+	localPos = Al.show( "Oui", "Non", alertTitle, alertInfo);
+
+	log("localPos : " + localPos);
+
 	var layer = selection[i];
 
 	var res = getMXML(layer)
 
 	clipboard.copy( res );
+
 	log("*** MXML complete ! ***");
 	log(res);
 
