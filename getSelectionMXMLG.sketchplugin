@@ -5,14 +5,24 @@
 * DONE :
 * - rect, alpha, radius, fill0, border0
 * - clipboard
-* - 
+* - localPosAlert
+
+* » localPos
+
 * TODO :
-* - 
+* - gradients
+* - multistates
+* - lines, path, ellipse
+* - img ( icons )
+* - multi-resolution
 * 
 */
 log("Plugin getSelectionMXMLG started...");
 
 // var test = selection.firstObject().style().fills().firstObject().color().hexValue();
+
+
+var useLocalPos;
 
 /***************
 * OBJECTS
@@ -75,13 +85,13 @@ var Al = {
 /*
 * returns MXML description of a layer / shape / Rectangle
 */
-function getMXML(layer)
+function getMXML(layer, localPos)
 {
 	log( "getMXML" );
 
 	// rect coord
 	var item = [layer frame];
-	var rect = getItemRect(item);
+	var rect = getItemRect(item, localPos);
 
 	// <
 	var itML = "<s:Rect ";
@@ -114,14 +124,14 @@ function getMXML(layer)
 /*
 * item rect coordinates
 */
-function getItemRect( item )
+function getItemRect( item , localPos)
 {
 	var rect = {};
 	rect.width = [item width];
 	rect.height = [item height];
 
-	rect.x = [item x];
-	rect.y = [item y];
+	rect.x = localPos ? 0 : [item x];
+	rect.y = localPos ? 0 : [item y];
 	return rect;
 }
 
@@ -224,7 +234,7 @@ for (var i=0; i<selection.length(); i++) {
 
 	var layer = selection[i];
 
-	var res = getMXML(layer)
+	var res = getMXML(layer, localPos);
 
 	clipboard.copy( res );
 
