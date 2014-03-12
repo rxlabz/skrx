@@ -5,7 +5,7 @@
 *
 * allow you export MXML skin for Apache Flex spark Button
 *
-»»» radialGradient
+»»» 
 *
 * TODO :
 * - shadows , innerShadows
@@ -87,16 +87,59 @@ var Al = {
 * FUNCTIONS
 *************** */
 
+
+function getSelectionOriginRect(){
+	var rect = {};
+
+	rect.x = 10;
+
+	var numItems = [selection length];
+	log(numItems);
+
+	var layer;
+	var minX, minY;
+	var maxX, maxY;
+	var itemX, itemY;
+	var itemW, itemH;
+
+	// determine x y min
+	for( var i = 0 ; i < numItems ; i ++){
+		layer = selection[i];
+		itemX = [[layer frame] x];
+		itemY = [[layer frame] y];
+		itemW = [[layer frame] width];
+		itemH = [[layer frame] height];
+		if( i == 0){
+			minX = itemX;
+			minY = itemY;
+			maxX = itemX + itemW;
+			maxY = itemY + itemH;
+		} else {
+			minX = Math.min(itemX , minX);
+			minY = Math.min(itemY , minY);
+			maxX = Math.max(itemX + itemW , maxX);
+			maxY = Math.max( itemY + itemH , maxY );
+		}
+	}
+
+	rect.x = minX;
+	rect.y = minY;
+	rect.width = maxX - minX;
+	rect.height = maxY - minY;
+
+	return rect;
+}
+
 /*
 * returns MXML description of a layer / shape / Rectangle
 */
-function getMXML(layer, setLocalPosition)
+function getMXML(layer, setLocalPosition, localCenter)
 {
 	log( "getMXML()..." );
 
 	// rect coord
 	var item = [layer frame];
-	var rect = getItemRect(item, setLocalPosition);
+	var rect = getItemRect(item, setLocalPosition, localCenter);
 
 	// <
 	var itML = "<s:Rect ";
@@ -129,14 +172,16 @@ function getMXML(layer, setLocalPosition)
 /*
 * item rect coordinates
 */
-function getItemRect( item , setLocalPosition)
+function getItemRect( item , setLocalPosition, localCenter)
 {
 	var rect = {};
 	rect.width = [item width];
 	rect.height = [item height];
 
-	rect.x = setLocalPosition ? 0 : [item x];
-	rect.y = setLocalPosition ? 0 : [item y];
+	var itemX = [item x];
+	var itemY = [item y];
+	rect.x = setLocalPosition ? itemX - localCenter.x : itemX;
+	rect.y = setLocalPosition ? itemY - localCenter.y : itemY;
 	return rect;
 }
 
@@ -243,8 +288,12 @@ function getFillNode(fill)
 }
 
 /**
-* 
-	<s:LinearGradient[isStroke? "Stroke"] rotation="90" >
+* export chaine de représentation d'un dégradé
+* @param gradient MSGradient
+* @param isRadial Bool
+* @param isStroke Bool
+* exemple :
+	<s:[isRadial?Radial:Linear]Gradient[isStroke?Stroke:] rotation="90" >
 		<s:GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
 		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
 	</s:LinearGradient[isStroke? "Stroke"]>
@@ -307,8 +356,12 @@ var LOCAL_POS_INFO = "Coordonnées locales : origine x,y = coin haut gauche de l
 var LOCAL_POS_TITLE = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
 setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 
+var localCenter = {x:0,y:0};
+if( setLocalPosition )
+	 localCenter = getSelectionOriginRect();
+
 /*
-* EXPORT LES ITEMS DE LA SELECTION
+* BUILD MXML CHAIN FOR SELECTION
 */
 var res = "";
 
@@ -318,9 +371,15 @@ for (var i=0; i<selection.length(); i++) {
 
 	var layer = selection[i];
 
-	res += getMXML(layer, setLocalPosition);
+	res += getMXML(layer, setLocalPosition, localCenter);
 }
 
+/*
+* EXPORT TO CLIPBOARD & LOG
+*/
 clipboard.copy( res );
 log("*** MXML complete ! ***");
 log(res);	
+Al.show('OK', null, "Export MXML", "Completed");
+
+
