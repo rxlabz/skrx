@@ -1,6 +1,10 @@
 // tests (ctrl alt cmd t)
 log('notif start');
 
+var gradient = selection.firstObject().style().fills().firstObject().gradient();
+
+log(gradient.from() + ' / ' + gradient.to());
+/*
 var Al = {
 	show:function( bt1Label,  title, info ){
 		var alert = [[NSAlert alloc] init];
@@ -16,7 +20,7 @@ var Al = {
 };
 
 Al.show('OK', "Export MXML", "Completed");
-
+*/
 /*
 UserNotification test » not working
 //[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:this];
