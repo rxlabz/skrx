@@ -17,7 +17,14 @@
 * - multi-resolution
 * - labelDisplay properties : color, fontSize
 */
+
 log("Plugin getSelectionMXMLG started...");
+
+/***************
+* CONST
+*************** */
+const ND = " >\n";
+const _ND = " />\n";
 
 /***************
 * OBJECTS
@@ -38,8 +45,7 @@ var T = {
 			return t; },
 }
 
-var ND = " >\n";
-var _ND = " />\n";
+
 
 /*
 * gestionnaire de clipboard
@@ -87,47 +93,52 @@ var Al = {
 * FUNCTIONS
 *************** */
 
-
+/**
+* returns local origin coordinates : top left point for the selection area
+*/
 function getSelectionOriginRect(){
-	var rect = {};
 
-	rect.x = 10;
+	var area = getSelectionArea();
 
-	var numItems = [selection length];
-	log(numItems);
+	var rect = {
+		x:area.left,
+		y:area.top,
+		width:area.right - area.left,
+		height:area.bottom - area.top
+	};
+
+	return rect;
+}
+
+function getSelectionArea(){
+	var mnmx = {};
 
 	var layer;
 	var minX, minY;
 	var maxX, maxY;
+	minX = minY = maxX = maxY = 0;
+
 	var itemX, itemY;
 	var itemW, itemH;
 
-	// determine x y min
+	var numItems = [selection length];
+	log(numItems);
+
+	// get min position : top-left and max : bottom-right
 	for( var i = 0 ; i < numItems ; i ++){
 		layer = selection[i];
 		itemX = [[layer frame] x];
 		itemY = [[layer frame] y];
 		itemW = [[layer frame] width];
 		itemH = [[layer frame] height];
-		if( i == 0){
-			minX = itemX;
-			minY = itemY;
-			maxX = itemX + itemW;
-			maxY = itemY + itemH;
-		} else {
-			minX = Math.min(itemX , minX);
-			minY = Math.min(itemY , minY);
-			maxX = Math.max(itemX + itemW , maxX);
-			maxY = Math.max( itemY + itemH , maxY );
-		}
+
+		mnmx.left = minX == 0 ? itemX : Math.min(itemX , minX);
+		mnmx.top = minY == 0 ? itemY : Math.min(itemY , minY);
+		mnmx.right = Math.max(itemX + itemW , maxX);
+		mnmx.bottom = Math.max( itemY + itemH , maxY );
 	}
 
-	rect.x = minX;
-	rect.y = minY;
-	rect.width = maxX - minX;
-	rect.height = maxY - minY;
-
-	return rect;
+	return mnmx;
 }
 
 /*
