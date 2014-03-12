@@ -4,6 +4,8 @@ log('notif start');
 var gradient = selection.firstObject().style().fills().firstObject().gradient();
 
 log(gradient.from() + ' / ' + gradient.to());
+
+log('notif end');
 /*
 var Al = {
 	show:function( bt1Label,  title, info ){
@@ -58,7 +60,7 @@ notification.informativeText = @"A notification";
 
 //[[NSNotificationCenter defaultCenter] postNotificationName:@"coucou" object:self];
 
-log('notif end');
+
 
 /*
 // Gradients study
