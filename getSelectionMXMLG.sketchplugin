@@ -94,41 +94,27 @@ var Al = {
 *************** */
 
 /**
-* returns local origin coordinates : top left point for the selection area
+* returns local origin coordinates : topLeft point coordinate for the selection area
 */
 function getSelectionOriginRect(){
 
 	var area = getSelectionArea();
 
-	var areaW = area.right - area.left;
-	var areaH = area.bottom - area.top;
-	log( "areaW : " + areaW);
-	log( "areaH : " + areaH);
-
-	var rect = {
+	var origin = {
 		x:area.left,
-		y:area.top,
-		width:areaW,
-		height:areaH
+		y:area.top
 	};
 
-	return rect;
+	return origin;
 }
 
 /**
-* returns top left right bottom area of selection
+* returns top left right bottom area + width height of selection
 */
 function getSelectionArea(){
 	var layer;
 
-	//var minX, minY;
-	//var maxX, maxY;
-	//minX = minY = maxX = maxY = 0;
-
-	var itemX, itemY;
-	var itemW, itemH;
-
-	var mnmx = {left:0, right:0,top:0,bottom:0};
+	var area = {left:0, right:0,top:0,bottom:0};
 
 	var numItems = [selection length];
 	log( "numItems : " + numItems);
@@ -136,18 +122,18 @@ function getSelectionArea(){
 	// get min position : top-left and max : bottom-right
 	for( var i = 0 ; i < numItems ; i ++){
 		layer = selection[i];
-		itemX = [[layer frame] x];
-		itemY = [[layer frame] y];
-		itemW = [[layer frame] width];
-		itemH = [[layer frame] height];
+		frame = [layer frame];
 
-		mnmx.left = (mnmx.left == 0) ? itemX : Math.min(itemX , mnmx.left);
-		mnmx.top = (mnmx.top == 0) ? itemY : Math.min(itemY , mnmx.top);
-		mnmx.right = Math.max(itemX + itemW , mnmx.right);
-		mnmx.bottom = Math.max( itemY + itemH , mnmx.bottom  );
+		area.left = (area.left == 0) ? frame.x() : Math.min(frame.x() , area.left);
+		area.top = (area.top == 0) ? frame.y() : Math.min(frame.y() , area.top);
+		area.right = Math.max(frame.x() + frame.width() , area.right);
+		area.bottom = Math.max( frame.y() + frame.height() , area.bottom  );
+
+		area.width = area.right - area.left;
+		area.height = area.bottom - area.top;
 	}
 
-	return mnmx;
+	return area;
 }
 
 /*
