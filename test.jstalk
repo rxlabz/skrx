@@ -1,7 +1,28 @@
 // tests (ctrl alt cmd t)
 
-log("alert...");
+var gradient = selection.firstObject().style().fills().firstObject().gradient();
 
+var direction = {
+	from:[gradient from],
+	to:[gradient to]
+};
+
+log("gradient : direction : " + direction.from + ' » ' + direction.to );
+
+var gradientsSteps = [gradient stops];
+var numSteps = gradientsSteps.length();
+log( "gradient : num Steps : " + numSteps );
+
+var gradient;
+for( var i = 0 ; i < numSteps ; i++)
+{
+	gradient = gradientsSteps[i];
+	log("gStep position : " + [gradient position]);
+	log("gStep color : " + [[gradient color] hexValue]);
+}
+
+/* 
+//NATIVE ALERT
 var alert = [[NSAlert alloc] init];
 [alert addButtonWithTitle:@"OK"];
 [alert addButtonWithTitle:@"Cancel"];
@@ -14,13 +35,17 @@ if ([alert runModal] == NSAlertFirstButtonReturn) {
     log('YES');
 }
 [alert release];
-
 log("*** alert complete ***");
-
-//var times = [[doc askForUserInput:"How many times?" initialValue:10] integerValue];
-//log("input : " + times);
+*/
 
 /*
+// USER INPUT
+var times = [[doc askForUserInput:"How many times?" initialValue:10] integerValue];
+log("input : " + times);
+*/
+
+/*
+// CLIPBOARD TEST
 var clipboard = {
 	board: NSPasteboard.generalPasteboard(),
 
@@ -35,6 +60,7 @@ clipboard.copy("azer");
 */
 
 /*
+// GET COLOR HEX VALUE
 var color = selection.firstObject().style().fills().firstObject().color();
 var hex = [color hexValue];
 log(hex);
