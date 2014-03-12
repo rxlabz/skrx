@@ -5,12 +5,13 @@
 *
 * allow you export MXML skin for Apache Flex spark Button
 *
-»»» multi selection
+»»» radialGradient
 *
 * TODO :
 * - shadows , innerShadows
 * - multistates
-* - radialGradient fill
+* - gradient angle
+* - radial gradient x, y, foalCenterPoint
 * - lines, path, ellipse
 * - img ( icons )
 * - multi-resolution
@@ -193,7 +194,9 @@ function getStrokeNode(border){
 	} else if( borderType == 1 ) // gradient
 	{
 		var gradient = [border gradient];
-		strokeChain += getLinearGradientNode(gradient, true);		
+		var gradientType = [gradient gradientType];
+		var isRadial = (gradientType == 1 );
+		strokeChain += getGradientNode(gradient, isRadial, true);		
 	} else {
 		log("!!! ERROR !!!")
 	}
@@ -227,7 +230,9 @@ function getFillNode(fill)
 	} else if( fillType == 1 ) // gradient
 	{
 		var gradient = [fill gradient];
-		fillChain += getLinearGradientNode(gradient, false);		
+		var gradientType = [gradient gradientType];
+		var isRadial = (gradientType == 1 );
+		fillChain += getGradientNode(gradient,isRadial, false);		
 	} else {
 		log("!!! ERROR !!!")
 	}
@@ -244,27 +249,28 @@ function getFillNode(fill)
 		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
 	</s:LinearGradient[isStroke? "Stroke"]>
 */
-function getLinearGradientNode(gradient, isStroke )
+function getGradientNode(gradient, isRadial, isStroke )
 {
-	log("getLinearGradientNode()...");
+	log("getGradientNode()...");
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
+	var gradientType = isRadial ? 'Radial' : "Linear";
 
-	var lg = "<s:LinearGradient"+strokeSufx+">\n";
+	var lg = "<s:"+ gradientType +"Gradient"+strokeSufx+">\n";
 	T.add();
 
-	lg += getLinearGradientEntriesNodes(gradient);
+	lg += getGradientEntriesNodes(gradient);
 
 	T.rm();
-	lg += "</s:LinearGradient"+strokeSufx+">\n";
+	lg += "</s:"+ gradientType +"Gradient"+strokeSufx+">\n";
 
 	log(lg);
 	return lg;
 }
 
-function getLinearGradientEntriesNodes(gradient)
+function getGradientEntriesNodes(gradient)
 {
-	log("getLinearGradientEntriesNodes()...");
+	log("getGradientEntriesNodes()...");
 	var entries = '';
 	var gradientEntries = [gradient stops];
 	var numEntries = gradientEntries.length();
