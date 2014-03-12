@@ -1,14 +1,41 @@
-//(ctrl alt cmd t)
-//var myColor  = [UIColor brownColor];
-//var components = CGColorGetComponents([myColor CGColor]);
+// tests (ctrl alt cmd t)
+
+log("alert...");
+
+var alert = [[NSAlert alloc] init];
+[alert addButtonWithTitle:@"OK"];
+[alert addButtonWithTitle:@"Cancel"];
+[alert setMessageText:@"Delete the record?"];
+[alert setInformativeText:@"Deleted records cannot be restored."];
+[alert setAlertStyle:NSWarningAlertStyle];
+
+if ([alert runModal] == NSAlertFirstButtonReturn) {
+    // OK clicked, delete the record
+    log('YES');
+}
+[alert release];
+
+log("*** alert complete ***");
+
+//var times = [[doc askForUserInput:"How many times?" initialValue:10] integerValue];
+//log("input : " + times);
+
+/*
+var clipboard = {
+	board: NSPasteboard.generalPasteboard(),
+
+	copy:function( value )
+	{
+		this.board.declareTypes_owner( [ NSPasteboardTypeString ], null );
+		this.board.setString_forType( value , NSPasteboardTypeString );	
+	}
+}
+clipboard.copy("azer");
+
+*/
+
+/*
 var color = selection.firstObject().style().fills().firstObject().color();
 var hex = [color hexValue];
-//NSColor *convertedColor = [self colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
 log(hex);
 /*
-const CGFloat* components;
-components = CGColorGetComponents(myColor.CGColor);
-NSLog(@"%f, %f, %f, %f", components[0],components[1],components[2],components[3]);
-NSLog(@"%X, %X, %X, %X", (char)(255*components[0]), (char)(255*components[1]), (char)(255*components[2]), (char)(255*components[3]));
-int hexValue = 0xFF0000*components[0] + 0xFF00*components[1] + 0xFF*components[2]; 
-*/
