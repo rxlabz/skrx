@@ -3,8 +3,9 @@
 /*
 * allow you export MXML skin for Apache Flex spark Button
 * DONE :
-* rect, alpha, radius, fill0, border0
-* 
+* - rect, alpha, radius, fill0, border0
+* - clipboard
+* - 
 * TODO :
 * - 
 * 
@@ -17,7 +18,9 @@ log("Plugin getSelectionMXMLG started...");
 * OBJECTS
 *************** */
 
-// gestionnaire de tabulation
+/*
+* gestionnaire de tabulation
+*/
 var T = {
 	value:0,
 	add:function(){ this.value ++ ;},
@@ -30,6 +33,12 @@ var T = {
 			return t; },
 }
 
+var ND = " >\n";
+var _ND = " >\n";
+
+/*
+* gestionnaire de clipboard
+*/
 var clipboard = {
 	board: NSPasteboard.generalPasteboard(),
 
@@ -44,6 +53,9 @@ var clipboard = {
 * FUNCTIONS
 *************** */
 
+/*
+* returns MXML description of a layer / shape / Rectangle
+*/
 function getMXML(layer)
 {
 	log( "getMXML" );
@@ -62,7 +74,7 @@ function getMXML(layer)
 	itML += getRadiusAttribute(layer);
 
 	// Rect>
-	itML += " >\n";
+	itML += ND;
 	T.add();
 
 	// stroke
@@ -80,6 +92,9 @@ function getMXML(layer)
 	return itML;
 }
 
+/*
+* item rect coordinates
+*/
 function getItemRect( item )
 {
 	var rect = {};
@@ -91,6 +106,9 @@ function getItemRect( item )
 	return rect;
 }
 
+/*
+* return style opacity
+*/
 function getOpacityAttribute( style )
 {
 	log("getOpacityAttribute()..." );
@@ -113,9 +131,17 @@ function getRadiusAttribute(layer)
 	return rd;
 }
 
+function getAlphaAttribute(color){
+	log("getAlphaAttribute()...");
+	var colorAlpha = [color alpha];
+	log('alpha : ' + colorAlpha );
+	a = " alpha=\""+ colorAlpha +"\" ";
 
-function getStrokeNode(border)
-{
+	return a;
+}
+
+
+function getStrokeNode(border){
 	log("getStrokeNode...");
 	var strokeChain = T.tab() + "<s:stroke>\n";
 	var borderType = [border fillType];
@@ -127,10 +153,9 @@ function getStrokeNode(border)
 
 		T.add();
 		strokeChain += T.tab() + "<s:SolidColorStroke color=\"#" + hexColor + "\" ";
-		var colorAlpha = [borderColor alpha];
-		log('alpha : ' + colorAlpha );
-		strokeChain += " alpha=\""+ colorAlpha +"\" ";
-		strokeChain += "/>\n";
+		strokeChain += getAlphaAttribute(borderColor);		
+
+		strokeChain += _ND;
 		T.rm();
 		strokeChain += T.tab() + "</s:stroke>\n";
 	}
@@ -154,10 +179,9 @@ function getFillNode(fill)
 
 		T.add();
 		fillChain += T.tab() + "<s:SolidColor color=\"#" + hexColor + "\" ";
-		var colorAlpha = [fillColor alpha];
-		log('colorAlpha : ' + colorAlpha);
-		fillChain += " alpha=\""+ colorAlpha +"\" ";
-		fillChain += "/>\n";
+		fillChain += getAlphaAttribute(fillColor);
+
+		fillChain += _ND;
 		T.rm();
 		fillChain += T.tab() + "</s:fill>\n";
 	}
@@ -174,6 +198,7 @@ for (var i=0; i<selection.length(); i++) {
 	var res = getMXML(layer)
 
 	clipboard.copy( res );
+	log("*** MXML complete ! ***");
 	log(res);
 
 }
