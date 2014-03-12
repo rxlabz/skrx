@@ -1,11 +1,82 @@
 // tests (ctrl alt cmd t)
 log('notif start');
 
+function getSelectionOriginRect(){
+	var rect = {};
+
+	rect.x = 10;
+
+	var numItems = [selection length];
+	log(numItems);
+
+	var layer;
+	var minX, minY;
+	var maxX, maxY;
+	var itemX, itemY;
+	var itemW, itemH;
+
+	// determine x y min
+	for( var i = 0 ; i < numItems ; i ++){
+		layer = selection[i];
+		itemX = [[layer frame] x];
+		itemY = [[layer frame] y];
+		itemW = [[layer frame] width];
+		itemH = [[layer frame] height];
+		if( i == 0){
+			minX = itemX;
+			minY = itemY;
+			maxX = itemX + itemW;
+			maxY = itemY + itemH;
+		} else {
+			minX = Math.min(itemX , minX);
+			minY = Math.min(itemY , minY);
+			maxX = Math.max(itemX + itemW , maxX);
+			maxY = Math.max( itemY + itemH , maxY );
+		}
+	}
+
+	rect.x = minX;
+	rect.y = minY;
+	rect.width = maxX - minX;
+	rect.height = maxY - minY;
+
+	return rect;
+}
+
+function getItemRect( item , setLocalPosition, originRect)
+{
+	var rect = {};
+	rect.width = [item width];
+	rect.height = [item height];
+
+	var itemX = [item x];
+	var itemY = [item y];
+	rect.x = setLocalPosition ? itemX - originRect.x : itemX;
+	rect.y = setLocalPosition ? itemY - originRect.y : itemY;
+	return rect;
+}
+
+var r = getSelectionOriginRect();
+
+log(r.x + ' , ' + r.y + ' , ' + r.width + ' , ' + r.height);
+
+var layer1 = selection[0];
+var item1 = [layer1 frame];
+var translated1 = getItemRect(  item1, true, r );
+log("translated1 : " + translated1.x + ',' + translated1.y);
+
+var layer2 = selection[1];
+var item2 = [layer2 frame];
+var translated2 = getItemRect( item2, true, r );
+log("translated2 : " + translated2.x + ',' + translated2.y);
+
+log('notif end');
+/*
+gradient studies
 var gradient = selection.firstObject().style().fills().firstObject().gradient();
 
 log(gradient.from() + ' / ' + gradient.to());
-
-log('notif end');
+*/
 /*
 var Al = {
 	show:function( bt1Label,  title, info ){
