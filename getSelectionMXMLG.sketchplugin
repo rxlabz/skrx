@@ -1,18 +1,20 @@
 // Selection to MXMLG (ctrl alt cmd f)
 
 /*
+* v0.1.2
+*
 * allow you export MXML skin for Apache Flex spark Button
 *
-»»» current :
-* - linearStrokes 
-
+»»» multi selection
+*
 * TODO :
+* - shadows , innerShadows
 * - multistates
 * - radialGradient fill
 * - lines, path, ellipse
 * - img ( icons )
 * - multi-resolution
-* 
+* - labelDisplay properties : color, fontSize
 */
 log("Plugin getSelectionMXMLG started...");
 
@@ -36,7 +38,7 @@ var T = {
 }
 
 var ND = " >\n";
-var _ND = " >\n";
+var _ND = " />\n";
 
 /*
 * gestionnaire de clipboard
@@ -58,10 +60,20 @@ var Al = {
 	show:function( bt1Label, bt2Label, title, info ){
 		var alert = [[NSAlert alloc] init];
 		[alert addButtonWithTitle:bt1Label];
-		[alert addButtonWithTitle:bt2Label];
-		[alert setMessageText:title];
-		[alert setInformativeText:info];
-		[alert setAlertStyle:NSWarningAlertStyle];		
+
+		if( bt2Label != null )
+			[alert addButtonWithTitle:bt2Label];
+
+		if( title != null)
+			[alert setMessageText:title];
+
+		if( info != null)
+			[alert setInformativeText:info];
+
+		if( ! bt2Label )
+			[alert setAlertStyle:NSInformationalAlertStyle];		
+		else
+			[alert setAlertStyle:NSWarningAlertStyle];		
 
 		var choice = [alert runModal];
 		[alert release];
@@ -175,11 +187,18 @@ function getStrokeNode(border){
 		T.add();
 		strokeChain += T.tab() + "<s:SolidColorStroke color=\"#" + hexColor + "\" ";
 		strokeChain += getAlphaAttribute(borderColor);		
-
 		strokeChain += _ND;
 		T.rm();
-		strokeChain += T.tab() + "</s:stroke>\n";
+		
+	} else if( borderType == 1 ) // gradient
+	{
+		var gradient = [border gradient];
+		strokeChain += getLinearGradientNode(gradient, true);		
+	} else {
+		log("!!! ERROR !!!")
 	}
+
+	strokeChain += T.tab() + "</s:stroke>\n";
 
 	return strokeChain;
 }
@@ -208,7 +227,7 @@ function getFillNode(fill)
 	} else if( fillType == 1 ) // gradient
 	{
 		var gradient = [fill gradient];
-		fillChain += getLinearGradientNode(gradient);		
+		fillChain += getLinearGradientNode(gradient, false);		
 	} else {
 		log("!!! ERROR !!!")
 	}
@@ -220,23 +239,24 @@ function getFillNode(fill)
 
 /**
 * 
-	<s:LinearGradient rotation="90" >
+	<s:LinearGradient[isStroke? "Stroke"] rotation="90" >
 		<s:GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
 		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
-	</s:LinearGradient>
+	</s:LinearGradient[isStroke? "Stroke"]>
 */
-
-function getLinearGradientNode(gradient)
+function getLinearGradientNode(gradient, isStroke )
 {
 	log("getLinearGradientNode()...");
 
-	var lg = "<s:LinearGradient>\n";
+	var strokeSufx = isStroke ? 'Stroke' : "";
+
+	var lg = "<s:LinearGradient"+strokeSufx+">\n";
 	T.add();
 
 	lg += getLinearGradientEntriesNodes(gradient);
 
 	T.rm();
-	lg += "</s:LinearGradient>\n";
+	lg += "</s:LinearGradient"+strokeSufx+">\n";
 
 	log(lg);
 	return lg;
@@ -284,6 +304,7 @@ setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 /*
 * EXPORT LES ITEMS DE LA SELECTION
 */
+var res = "";
 
 for (var i=0; i<selection.length(); i++) {
 
@@ -291,11 +312,9 @@ for (var i=0; i<selection.length(); i++) {
 
 	var layer = selection[i];
 
-	var res = getMXML(layer, setLocalPosition);
-
-	clipboard.copy( res );
-
-	log("*** MXML complete ! ***");
-	log(res);
-
+	res += getMXML(layer, setLocalPosition);
 }
+
+clipboard.copy( res );
+log("*** MXML complete ! ***");
+log(res);	

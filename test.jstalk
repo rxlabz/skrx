@@ -1,5 +1,63 @@
 // tests (ctrl alt cmd t)
+log('notif start');
 
+var Al = {
+	show:function( bt1Label,  title, info ){
+		var alert = [[NSAlert alloc] init];
+		[alert addButtonWithTitle:bt1Label];
+		[alert setMessageText:title];
+		[alert setInformativeText:info];
+		[alert setAlertStyle:NSCriticalAlertStyle];		
+
+		var choice = [alert runModal];
+		[alert release];
+		return choice == NSInformationalAlertStyle;
+	}
+};
+
+Al.show('OK', "Export MXML", "Completed");
+
+/*
+UserNotification test » not working
+//[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:this];
+//register to listen for event    
+// [[NSNotificationCenter defaultCenter]
+//   addObserver:self
+//   name:@"eventType"
+//   object:nil ];
+
+
+function userNotificationCenter_center_shouldPresentNotification(center, notification){
+	return true;
+}
+/*
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center
+     shouldPresentNotification:(NSUserNotification *)notification
+{
+    return YES;
+}
+*/
+
+
+
+/*
+var notification = [[NSUserNotification alloc] init];
+notification.title = @"ouaich";
+notification.informativeText = @"A notification";
+
+[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+[notification release]
+*/
+
+//event handler when event occurs
+
+
+//[[NSNotificationCenter defaultCenter] postNotificationName:@"coucou" object:self];
+
+log('notif end');
+
+/*
+// Gradients study
 var gradient = selection.firstObject().style().fills().firstObject().gradient();
 
 var direction = {
@@ -17,9 +75,10 @@ var gradient;
 for( var i = 0 ; i < numSteps ; i++)
 {
 	gradient = gradientsSteps[i];
-	log("gStep position : " + [gradient position]);
+	log("gStep ratio : " + [gradient position]);
 	log("gStep color : " + [[gradient color] hexValue]);
 }
+*/
 
 /* 
 //NATIVE ALERT

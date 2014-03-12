@@ -15,4 +15,4 @@ Exports Sketch selected elements (for now only rectangles) to Apache Flex MXML o
 
 # 0.1
 -  coordinates
--  fill and strok e
+-  fill and stroke
