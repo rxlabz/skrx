@@ -71,6 +71,7 @@ var translated2 = getItemRect( item2, true, r );
 log("translated2 : " + translated2.x + ',' + translated2.y);
 
 log('notif end');
+
 /*
 gradient studies
 var gradient = selection.firstObject().style().fills().firstObject().gradient();
