@@ -100,29 +100,38 @@ function getSelectionOriginRect(){
 
 	var area = getSelectionArea();
 
+	var areaW = area.right - area.left;
+	var areaH = area.bottom - area.top;
+	log( "areaW : " + areaW);
+	log( "areaH : " + areaH);
+
 	var rect = {
 		x:area.left,
 		y:area.top,
-		width:area.right - area.left,
-		height:area.bottom - area.top
+		width:areaW,
+		height:areaH
 	};
 
 	return rect;
 }
 
+/**
+* returns top left right bottom area of selection
+*/
 function getSelectionArea(){
-	var mnmx = {};
-
 	var layer;
-	var minX, minY;
-	var maxX, maxY;
-	minX = minY = maxX = maxY = 0;
+
+	//var minX, minY;
+	//var maxX, maxY;
+	//minX = minY = maxX = maxY = 0;
 
 	var itemX, itemY;
 	var itemW, itemH;
 
+	var mnmx = {left:0, right:0,top:0,bottom:0};
+
 	var numItems = [selection length];
-	log(numItems);
+	log( "numItems : " + numItems);
 
 	// get min position : top-left and max : bottom-right
 	for( var i = 0 ; i < numItems ; i ++){
@@ -132,10 +141,10 @@ function getSelectionArea(){
 		itemW = [[layer frame] width];
 		itemH = [[layer frame] height];
 
-		mnmx.left = minX == 0 ? itemX : Math.min(itemX , minX);
-		mnmx.top = minY == 0 ? itemY : Math.min(itemY , minY);
-		mnmx.right = Math.max(itemX + itemW , maxX);
-		mnmx.bottom = Math.max( itemY + itemH , maxY );
+		mnmx.left = (mnmx.left == 0) ? itemX : Math.min(itemX , mnmx.left);
+		mnmx.top = (mnmx.top == 0) ? itemY : Math.min(itemY , mnmx.top);
+		mnmx.right = Math.max(itemX + itemW , mnmx.right);
+		mnmx.bottom = Math.max( itemY + itemH , mnmx.bottom  );
 	}
 
 	return mnmx;
@@ -236,17 +245,15 @@ function getStrokeNode(border){
 	var strokeChain = T.tab() + "<s:stroke>\n";
 	var borderType = [border fillType];
 
+	T.add();	
 	if( borderType == 0 ){
 		var borderColor = [border color];
-		var hexColor = [borderColor hexValue];
-		log('hexValue : ' + hexColor);
+		// var hexColor = [borderColor hexValue];
+		// log('hexValue : ' + hexColor);
 
-		T.add();
-		strokeChain += T.tab() + "<s:SolidColorStroke color=\"#" + hexColor + "\" ";
-		strokeChain += getAlphaAttribute(borderColor);		
-		strokeChain += _ND;
-		T.rm();
-		
+		// strokeChain += T.tab() + "<s:SolidColorStroke color=\"#" + hexColor + "\" ";
+		// strokeChain += getAlphaAttribute(borderColor);		
+		strokeChain += getSolidColorNode(borderColor, true);		
 	} else if( borderType == 1 ) // gradient
 	{
 		var gradient = [border gradient];
@@ -256,6 +263,8 @@ function getStrokeNode(border){
 	} else {
 		log("!!! ERROR !!!")
 	}
+
+	T.rm();
 
 	strokeChain += T.tab() + "</s:stroke>\n";
 
@@ -273,14 +282,7 @@ function getFillNode(fill)
 	if( fillType == 0 ) // solid color
 	{
 		var fillColor = [fill color];
-		var hexColor = [fillColor hexValue];
-		log('hexValue : ' + hexColor);
-
-		T.add();
-		fillChain += T.tab() + "<s:SolidColor color=\"#" + hexColor + "\" ";
-		fillChain += getAlphaAttribute(fillColor);
-
-		fillChain += _ND;
+		fillChain += getSolidColorNode(fillColor, false);
 		T.rm();
 		
 	} else if( fillType == 1 ) // gradient
@@ -296,6 +298,23 @@ function getFillNode(fill)
 	fillChain += T.tab() + "</s:fill>\n";	
 
 	return fillChain;
+}
+
+function getSolidColorNode( color, isStroke )
+{
+	var c = "";
+
+	var strokeSufx = isStroke ? 'Stroke' : "";
+	var hexColor = [color hexValue];
+	log('hexValue : ' + hexColor);
+
+	T.add();
+	c += T.tab() + "<s:SolidColor"+strokeSufx+" color=\"#" + hexColor + "\" ";
+	c += getAlphaAttribute(color);
+
+	c += _ND;
+
+	return c;
 }
 
 /**
@@ -368,6 +387,7 @@ var LOCAL_POS_TITLE = "Voulez-vous utiliser les coordonnées locales de la séle
 setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 
 var localCenter = {x:0,y:0};
+
 if( setLocalPosition )
 	 localCenter = getSelectionOriginRect();
 
@@ -375,12 +395,12 @@ if( setLocalPosition )
 * BUILD MXML CHAIN FOR SELECTION
 */
 var res = "";
-
+var layer ;
 for (var i=0; i<selection.length(); i++) {
 
 	log("setLocalPosition : " + setLocalPosition);
 
-	var layer = selection[i];
+	layer = selection[i];
 
 	res += getMXML(layer, setLocalPosition, localCenter);
 }
