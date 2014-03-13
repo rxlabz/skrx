@@ -38,10 +38,9 @@ var T = {
 		for(var i = 0 ; i < this.value ; i++){
 			t += "\t";
 		}
-		return t; },
+		return t;
 	}
-
-
+};		
 
 /*
 * gestionnaire de clipboard
@@ -54,7 +53,7 @@ var clipboard = {
 		this.board.declareTypes_owner( [ NSPasteboardTypeString ], null );
 		this.board.setString_forType( value , NSPasteboardTypeString );	
 	}
-}
+};
 
 /**
 * gestionnaire d'alerte
