@@ -5,29 +5,16 @@
 *
 * allow you export MXML skin for Apache Flex spark Button
 *
-»»» 	
-*
-* TODO :
-* - multistates
-* - shadows distance +? angle
-* - gradient angle
-* - radial gradient x, y, foalCenterPoint
-* - lines, path, ellipse
-* - img ( icons )
-* - multi-resolution
-* - labelDisplay properties : color, fontSize
 */
 
 log("Plugin getSelectionMXMLG started...");
-
-
 
 /***************
 * OBJECTS
 *************** */
 
 /*
-* gestionnaire de tabulation
+* \tab manager
 */
 var T = {
 	value:0,
@@ -43,7 +30,7 @@ var T = {
 };		
 
 /*
-* gestionnaire de clipboard
+* clipboard manager
 */
 var clipboard = {
 	board: NSPasteboard.generalPasteboard(),
@@ -56,7 +43,7 @@ var clipboard = {
 };
 
 /**
-* gestionnaire d'alerte
+* Alert manager
 */
 var Al = {
 	show:function( firstButtonLabel, secondButtonLabel, title, info ){
@@ -296,7 +283,7 @@ function getSolidColorNode( color, isStroke ){
 }
 
 /**
-* export chaine de représentation d'un dégradé
+* export MXML Gradient
 * @param gradient MSGradient
 * @param isRadial Bool
 * @param isStroke Bool
@@ -429,7 +416,7 @@ function exportSelection(){
 
 	// EXPORT TO CLIPBOARD & LOG
 	clipboard.copy( res );
-	log("*** MXML complete ! ***");
+	log("*** Export complete ! ***");
 	log(res);	
 
 	Al.show('OK', null, "Export MXML", "Completed");
@@ -441,15 +428,15 @@ function exportSelection(){
 const ND = " >\n";
 const _ND = " />\n";
 
-const LOCAL_POS_INFO = "Coordonnées locales : origine x,y = coin haut gauche de la selection";
-const LOCAL_POS_TITLE = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
+const LOCAL_POS_TITLE = "Do you want to use the local coordinates of the selection?";
+const LOCAL_POS_INFO = "In Local coordinates, elements positions are calculated from the topleft corner of the selection.";
 
 /* ********************************
 * RUN
 /* ******************************* */ 
 
 // translate to local coordinates
-var setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
+var setLocalPosition = Al.show( "Yes", "No", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 var localCenter = {x:0,y:0};
 
 if( setLocalPosition )
@@ -458,5 +445,22 @@ if( setLocalPosition )
 // EXPORT
 exportSelection();
 
-
+/*
+NOW »»» localisation
+*
+* TODO :
+* - lines, path, ellipse
+* - shadows distance +? angle
+* - multistates
+* - multi-resolution
+* - gradient angle
+* - radial gradient x, y, foalCenterPoint
+* - labelDisplay properties : color, fontSize
+* - img ( icons )
+* - refactor to tim templating
+* - 0.2 » global refactor : skrx
+* - skin file generation
+* - component templates
+* - ...
+*/
 
