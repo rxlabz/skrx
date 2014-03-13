@@ -20,11 +20,7 @@
 
 log("Plugin getSelectionMXMLG started...");
 
-/***************
-* CONST
-*************** */
-const ND = " >\n";
-const _ND = " />\n";
+
 
 /***************
 * OBJECTS
@@ -38,12 +34,12 @@ var T = {
 	add:function(){ this.value ++ ;},
 	rm:function(){ this.value --  ;},
 	tab:function(){
-			var t = "";
-			for(var i = 0 ; i < this.value ; i++){
-				t += "\t";
-			}
-			return t; },
-}
+		var t = "";
+		for(var i = 0 ; i < this.value ; i++){
+			t += "\t";
+		}
+		return t; },
+	}
 
 
 
@@ -64,12 +60,12 @@ var clipboard = {
 * gestionnaire d'alerte
 */
 var Al = {
-	show:function( bt1Label, bt2Label, title, info ){
+	show:function( firstButtonLabel, secondButtonLabel, title, info ){
 		var alert = [[NSAlert alloc] init];
-		[alert addButtonWithTitle:bt1Label];
+		[alert addButtonWithTitle:firstButtonLabel];
 
-		if( bt2Label != null )
-			[alert addButtonWithTitle:bt2Label];
+		if( secondButtonLabel != null )
+			[alert addButtonWithTitle:secondButtonLabel];
 
 		if( title != null)
 			[alert setMessageText:title];
@@ -77,7 +73,7 @@ var Al = {
 		if( info != null)
 			[alert setInformativeText:info];
 
-		if( ! bt2Label )
+		if( ! secondButtonLabel )
 			[alert setAlertStyle:NSInformationalAlertStyle];		
 		else
 			[alert setAlertStyle:NSWarningAlertStyle];		
@@ -139,8 +135,7 @@ function getSelectionArea(){
 /*
 * returns MXML description of a layer / shape / Rectangle
 */
-function getMXML(layer, setLocalPosition, localCenter)
-{
+function getMXML(layer, setLocalPosition, localCenter){
 	log( "getMXML()..." );
 
 	// rect coord
@@ -178,8 +173,7 @@ function getMXML(layer, setLocalPosition, localCenter)
 /*
 * item rect coordinates
 */
-function getItemRect( item , setLocalPosition, localCenter)
-{
+function getItemRect( item , setLocalPosition, localCenter){
 	var rect = {};
 	rect.width = [item width];
 	rect.height = [item height];
@@ -194,8 +188,7 @@ function getItemRect( item , setLocalPosition, localCenter)
 /*
 * return style opacity
 */
-function getOpacityAttribute( style )
-{
+function getOpacityAttribute( style ){
 	log("getOpacityAttribute()..." );
 	
 	var gfxContext = [style contextSettings];
@@ -205,8 +198,7 @@ function getOpacityAttribute( style )
 	return " alpha=\"" + o + "\" ";
 }
 
-function getRadiusAttribute(layer)
-{
+function getRadiusAttribute(layer){
 	log("getRadiusAttribute()...");
 	var radius = [[[layer layers] firstObject] fixedRadius];
 	var rd = " radiusX=\"" + radius + "\" ";
@@ -258,8 +250,7 @@ function getStrokeNode(border){
 }
 
 
-function getFillNode(fill)
-{
+function getFillNode(fill){
 	log("getFillNode...");
 
 	var fillChain = T.tab() + "<s:fill>\n";
@@ -286,8 +277,7 @@ function getFillNode(fill)
 	return fillChain;
 }
 
-function getSolidColorNode( color, isStroke )
-{
+function getSolidColorNode( color, isStroke ){
 	var c = "";
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
@@ -309,13 +299,12 @@ function getSolidColorNode( color, isStroke )
 * @param isRadial Bool
 * @param isStroke Bool
 * exemple :
-	<s:[isRadial?Radial:Linear]Gradient[isStroke?Stroke:] rotation="90" >
-		<s:GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
-		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
-	</s:LinearGradient[isStroke? "Stroke"]>
+*	<s:[isRadial?Radial:Linear]Gradient[isStroke?Stroke:] rotation="90" >
+*		<s:GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
+*		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
+*	</s:LinearGradient[isStroke? "Stroke"]>
 */
-function getGradientNode(gradient, isRadial, isStroke )
-{
+function getGradientNode(gradient, isRadial, isStroke ){
 	log("getGradientNode()...");
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
@@ -333,14 +322,13 @@ function getGradientNode(gradient, isRadial, isStroke )
 	return lg;
 }
 
-function getGradientEntriesNodes(gradient)
-{
+function getGradientEntriesNodes(gradient){
 	log("getGradientEntriesNodes()...");
 	var entries = '';
 	var gradientEntries = [gradient stops];
 	var numEntries = gradientEntries.length();
 	log("numEntries : " + numEntries);
-	
+
 	for( var i = 0 ; i < numEntries ; i++)
 	{
 		entry = gradientEntries[i];
@@ -356,47 +344,57 @@ function getGradientEntriesNodes(gradient)
 		log("entry alpha : " + entryAlpha);
 		entries += "alpha=\"" + entryAlpha + "\" />";
 	}
-	
+
 	log(entries);
 
 	return entries;
 }
 
-// 
 
-/*
-* COORDINATES POS
-*/
-var setLocalPosition;
-var LOCAL_POS_INFO = "Coordonnées locales : origine x,y = coin haut gauche de la selection";
-var LOCAL_POS_TITLE = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
-setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
+function exportSelection(){
+	var res = "";
+	var layer ;
 
+	for (var i=0; i<selection.length(); i++) {
+
+		log("setLocalPosition : " + setLocalPosition);
+
+		layer = selection[i];
+
+		res += getMXML(layer, setLocalPosition, localCenter);
+	}
+
+
+	// EXPORT TO CLIPBOARD & LOG
+	clipboard.copy( res );
+	log("*** MXML complete ! ***");
+	log(res);	
+
+	Al.show('OK', null, "Export MXML", "Completed");
+}
+
+/***************
+* CONST
+*************** */
+const ND = " >\n";
+const _ND = " />\n";
+
+const LOCAL_POS_INFO = "Coordonnées locales : origine x,y = coin haut gauche de la selection";
+const LOCAL_POS_TITLE = "Voulez-vous utiliser les coordonnées locales de la sélection ?";
+
+/* ********************************
+* RUN
+/* ******************************* */ 
+
+// translate to local coordinates
+var setLocalPosition = Al.show( "Oui", "Non", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 var localCenter = {x:0,y:0};
 
 if( setLocalPosition )
-	 localCenter = getSelectionOriginRect();
+	localCenter = getSelectionOriginRect();
 
-/*
-* BUILD MXML CHAIN FOR SELECTION
-*/
-var res = "";
-var layer ;
-for (var i=0; i<selection.length(); i++) {
+// EXPORT
+exportSelection();
 
-	log("setLocalPosition : " + setLocalPosition);
-
-	layer = selection[i];
-
-	res += getMXML(layer, setLocalPosition, localCenter);
-}
-
-/*
-* EXPORT TO CLIPBOARD & LOG
-*/
-clipboard.copy( res );
-log("*** MXML complete ! ***");
-log(res);	
-Al.show('OK', null, "Export MXML", "Completed");
 
 
