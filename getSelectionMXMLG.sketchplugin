@@ -206,7 +206,6 @@ function getAlphaAttribute(color){
 	return a;
 }
 
-
 function getStrokeNode(border){
 	log("getStrokeNode...");
 	var strokeChain = T.tab() + "<s:stroke>\n";
@@ -214,22 +213,13 @@ function getStrokeNode(border){
 
 	T.add();	
 	if( borderType == 0 ){
-		var borderColor = [border color];
-		// var hexColor = [borderColor hexValue];
-		// log('hexValue : ' + hexColor);
-
-		// strokeChain += T.tab() + "<s:SolidColorStroke color=\"#" + hexColor + "\" ";
-		// strokeChain += getAlphaAttribute(borderColor);		
+		var borderColor = [border color];	
 		strokeChain += getSolidColorNode(borderColor, true);		
-	} else if( borderType == 1 ) // gradient
-	{
+	} else if( borderType == 1 ){ // gradient
 		var gradient = [border gradient];
-		var gradientType = [gradient gradientType];
-		var isRadial = (gradientType == 1 );
-		strokeChain += getGradientNode(gradient, isRadial, true);		
-	} else {
+		strokeChain += getGradientNode(gradient, true);		
+	} else 
 		log("!!! ERROR !!!")
-	}
 
 	T.rm();
 
@@ -245,21 +235,15 @@ function getFillNode(fill){
 	var fillChain = T.tab() + "<s:fill>\n";
 	var fillType = [fill fillType];
 
-	if( fillType == 0 ) // solid color
-	{
+	if( fillType == 0 ){ // solid color
 		var fillColor = [fill color];
 		fillChain += getSolidColorNode(fillColor, false);
 		T.rm();
-		
-	} else if( fillType == 1 ) // gradient
-	{
+	} else if( fillType == 1 ){ // gradient
 		var gradient = [fill gradient];
-		var gradientType = [gradient gradientType];
-		var isRadial = (gradientType == 1 );
-		fillChain += getGradientNode(gradient,isRadial, false);		
-	} else {
+		fillChain += getGradientNode(gradient, false);		
+	} else 
 		log("!!! ERROR !!!")
-	}
 
 	fillChain += T.tab() + "</s:fill>\n";	
 
@@ -285,7 +269,6 @@ function getSolidColorNode( color, isStroke ){
 /**
 * export MXML Gradient
 * @param gradient MSGradient
-* @param isRadial Bool
 * @param isStroke Bool
 * exemple :
 *	<s:[isRadial?Radial:Linear]Gradient[isStroke?Stroke:] rotation="90" >
@@ -293,8 +276,11 @@ function getSolidColorNode( color, isStroke ){
 *		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
 *	</s:LinearGradient[isStroke? "Stroke"]>
 */
-function getGradientNode(gradient, isRadial, isStroke ){
+function getGradientNode(gradient, isStroke ){
 	log("getGradientNode()...");
+
+	var gradientType = [gradient gradientType];
+	var isRadial = (gradientType == 1 );	
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
 	var gradientType = isRadial ? 'Radial' : "Linear";
@@ -365,9 +351,9 @@ function getShadowBytype( style , inner){
 	var shadow = shadows[0];
 	var s = "";
 
-	if( shadow ){
+	if( shadow )
 		s += getShadow(shadow, inner);
-	}
+	
 	return s;
 }
 
@@ -435,7 +421,7 @@ const LOCAL_POS_INFO = "In Local coordinates, elements positions are calculated 
 * RUN
 /* ******************************* */ 
 
-// translate to local coordinates
+// Alert : local coordinates ?
 var setLocalPosition = Al.show( "Yes", "No", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 var localCenter = {x:0,y:0};
 
@@ -446,7 +432,7 @@ if( setLocalPosition )
 exportSelection();
 
 /*
-NOW »»» localisation
+NOW »»» refactoring
 *
 * TODO :
 * - lines, path, ellipse
