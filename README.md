@@ -4,6 +4,8 @@ Sketch Plugin, http://www.bohemiancoding.com/sketch
 
 Exports Sketch selected elements (for now only rectangles) to Apache Flex MXML or FXG, and copy it to clipboard.
 
+written in JSTalk ( http://jstalk.org ). For more informations : http://www.bohemiancoding.com/sketch/scripting
+
 ##### » 0.1.3
 - strokes pixelHinting
 - gradient angle
