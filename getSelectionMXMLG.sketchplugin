@@ -75,6 +75,8 @@ var Al = {
 * FUNCTIONS
 *************** */
 
+const PIXEL_HINTING = " pixelHinting=\"true\" " ;
+
 /**
 * returns local origin coordinates : topLeft point coordinate for the selection area
 */
@@ -148,13 +150,14 @@ function getMXML(layer, setLocalPosition, localCenter){
 	// fill
 	var itemFills = [itemStyle fills];
 	itML += getFillNode( itemFills[0]);
-	T.rm();
-
-	// 
+	
+	// shadows 
 	itML += getFilters( layer.style() );
 
+	T.rm();
+
 	// </
-	itML += "</s:Rect>";
+	itML += "</s:Rect>\n\n";
 
 	return itML;
 }
@@ -211,7 +214,8 @@ function getStrokeNode(border){
 	var strokeChain = T.tab() + "<s:stroke>\n";
 	var borderType = [border fillType];
 
-	T.add();	
+	T.add();
+
 	if( borderType == 0 ){
 		var borderColor = [border color];	
 		strokeChain += getSolidColorNode(borderColor, true);		
@@ -235,6 +239,8 @@ function getFillNode(fill){
 	var fillChain = T.tab() + "<s:fill>\n";
 	var fillType = [fill fillType];
 
+	T.add();
+
 	if( fillType == 0 ){ // solid color
 		var fillColor = [fill color];
 		fillChain += getSolidColorNode(fillColor, false);
@@ -242,8 +248,10 @@ function getFillNode(fill){
 		var gradient = [fill gradient];
 		fillChain += getGradientNode(gradient, false);		
 	} else 
-		log("!!! ERROR !!!")
+		log("!!! ERROR !!!");
 
+	T.rm();
+	
 	fillChain += T.tab() + "</s:fill>\n";	
 
 	return fillChain;
@@ -257,17 +265,13 @@ function getSolidColorNode( color, isStroke ){
 	var hexColor = [color hexValue];
 	log('hexValue : ' + hexColor);
 
-	T.add();
 	c += T.tab() + "<s:SolidColor"+strokeSufx+" color=\"#" + hexColor + "\" ";
 	c += getAlphaAttribute(color);
 	c += pxHint;
 	c += _ND;
-	T.rm();
 
 	return c;
 }
-
-const PIXEL_HINTING = " pixelHinting=\"true\" " ;
 
 /**
 * export MXML Gradient
@@ -281,7 +285,8 @@ const PIXEL_HINTING = " pixelHinting=\"true\" " ;
 */
 function getGradientNode(gradient, isStroke ){
 	log("getGradientNode()...");
-
+	
+	
 	var gradientType = [gradient gradientType];
 	var isRadial = (gradientType == 1 );	
 
@@ -290,17 +295,14 @@ function getGradientNode(gradient, isStroke ){
 
 	var pxHint = isStroke ? PIXEL_HINTING : "";
 
-	var g = "<s:"+ gradientType +"Gradient"+strokeSufx ;
+	var g = T.tab() + "<s:"+ gradientType +"Gradient"+strokeSufx ;
 	g += getGradientAngle(gradient) ;
 	g += pxHint;
-	g += _ND;
-
-	T.add();
+	g += ND;
 
 	g += getGradientEntriesNodes(gradient);
-
-	T.rm();
-	g += "</s:"+ gradientType +"Gradient"+strokeSufx+">\n";
+	
+	g += T.tab() + "</s:"+ gradientType +"Gradient"+strokeSufx+">\n";
 
 	log(g);
 	return g;
@@ -323,6 +325,7 @@ function getGradientEntriesNodes(gradient){
 	var numEntries = gradientEntries.length();
 	log("numEntries : " + numEntries);
 
+	T.add();
 	for( var i = 0 ; i < numEntries ; i++)
 	{
 		entry = gradientEntries[i];
@@ -336,9 +339,9 @@ function getGradientEntriesNodes(gradient){
 
 		var entryAlpha = [[entry color] alpha];
 		log("entry alpha : " + entryAlpha);
-		entries += "alpha=\"" + entryAlpha + "\" />";
+		entries += "alpha=\"" + entryAlpha + "\" />\n";
 	}
-
+	T.rm();
 	log(entries);
 
 	return entries;
@@ -348,7 +351,7 @@ function getFilters( style )
 {
 	log("getFilters()...")
 
-	var f = "<s:filters>\n";
+	var f = T.tab() + "<s:filters>\n";
 
 	// shadows
 	var shadowString = getShadowBytype(style, true);
@@ -358,7 +361,7 @@ function getFilters( style )
 	var innerShadowString = getShadowBytype(style, false);
 	f += innerShadowString;
 
-	f += "</s:filters>\n";
+	f += T.tab() + "</s:filters>\n";
 
 	return ( shadowString!= "" || innerShadowString != "") ? f : '';
 }
@@ -384,7 +387,8 @@ function getShadowBytype( style , inner){
 */
 function getShadow( shadow , inner)
 {
-	var s = "<s:DropShadowFilter ";
+	T.add();
+	var s = T.tab() + "<s:DropShadowFilter ";
 
 	s += inner ? "inner=\"true\" " : "";
 	s +=  "blurX=\"" + shadow.blurRadius() + "\" ";
@@ -400,6 +404,7 @@ function getShadow( shadow , inner)
 	// ANGLE » s +=  "angle=\"" + getShadowAngle + "\" ";
 
 	s += _ND;
+	T.rm();
 
 	return s;
 }
