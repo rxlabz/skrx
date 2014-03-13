@@ -7,6 +7,9 @@ Sketch Plugin
 
 Exports Sketch selected elements (for now only rectangles) to Apache Flex MXML or FXG
 
+» 0.1.3
+- shadows , innerShadows (blur, color, alpha, strength)
+
 ## 0.1.2
 - local relative coordinates
 - linearGradient Strokes 
