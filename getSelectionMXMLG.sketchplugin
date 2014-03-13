@@ -398,7 +398,7 @@ function getShadow( shadow , inner)
 	s +=  "distance=\"" + distance + "\" ";
 	s +=  "color=\"#" + shadow.color().hexValue() + "\" ";
 	s +=  "alpha=\"" + shadow.color().alpha() + "\" ";
-	s +=  "strength=\"" + shadow.spread() + "\" ";
+	s +=  "strength=\"" + (shadow.spread() + 1) + "\" ";
 
 	// ANGLE » s +=  "distance=\"" + getShadowDistance + "\" ";
 	// ANGLE » s +=  "angle=\"" + getShadowAngle + "\" ";
