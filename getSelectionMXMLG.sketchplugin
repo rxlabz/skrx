@@ -391,14 +391,10 @@ function exportSelection(){
 	var layer ;
 
 	for (var i=0; i<selection.length(); i++) {
-
 		log("setLocalPosition : " + setLocalPosition);
-
 		layer = selection[i];
-
 		res += getMXML(layer, setLocalPosition, localCenter);
 	}
-
 
 	// EXPORT TO CLIPBOARD & LOG
 	clipboard.copy( res );
