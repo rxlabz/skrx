@@ -254,6 +254,7 @@ function getSolidColorNode( color, isStroke ){
 	var c = "";
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
+	var pixelHinting = isStroke ? "pixelHinting=\"true\"" : "";
 	var hexColor = [color hexValue];
 	log('hexValue : ' + hexColor);
 
@@ -285,7 +286,10 @@ function getGradientNode(gradient, isStroke ){
 	var strokeSufx = isStroke ? 'Stroke' : "";
 	var gradientType = isRadial ? 'Radial' : "Linear";
 
-	var lg = "<s:"+ gradientType +"Gradient"+strokeSufx+">\n";
+	var lg = "<s:"+ gradientType +"Gradient"+strokeSufx ;
+	lg += getGradientAngle(gradient) ;
+	lg += ">\n";
+	
 	T.add();
 
 	lg += getGradientEntriesNodes(gradient);
@@ -295,6 +299,16 @@ function getGradientNode(gradient, isStroke ){
 
 	log(lg);
 	return lg;
+}
+
+function getGradientAngle(gradient){
+	var a = "";
+	var p1 = gradient.from();
+	var p2 = gradient.to();
+	var angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+	a += " angle=\""+ angle +"\" "
+
+	return a;
 }
 
 function getGradientEntriesNodes(gradient){
