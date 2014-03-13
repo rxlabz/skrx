@@ -238,7 +238,6 @@ function getFillNode(fill){
 	if( fillType == 0 ){ // solid color
 		var fillColor = [fill color];
 		fillChain += getSolidColorNode(fillColor, false);
-		T.rm();
 	} else if( fillType == 1 ){ // gradient
 		var gradient = [fill gradient];
 		fillChain += getGradientNode(gradient, false);		
@@ -254,18 +253,21 @@ function getSolidColorNode( color, isStroke ){
 	var c = "";
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
-	var pixelHinting = isStroke ? "pixelHinting=\"true\"" : "";
+	var pxHint = isStroke ? PIXEL_HINTING : "";
 	var hexColor = [color hexValue];
 	log('hexValue : ' + hexColor);
 
 	T.add();
 	c += T.tab() + "<s:SolidColor"+strokeSufx+" color=\"#" + hexColor + "\" ";
 	c += getAlphaAttribute(color);
-
+	c += pxHint;
 	c += _ND;
+	T.rm();
 
 	return c;
 }
+
+const PIXEL_HINTING = " pixelHinting=\"true\" " ;
 
 /**
 * export MXML Gradient
@@ -286,19 +288,22 @@ function getGradientNode(gradient, isStroke ){
 	var strokeSufx = isStroke ? 'Stroke' : "";
 	var gradientType = isRadial ? 'Radial' : "Linear";
 
-	var lg = "<s:"+ gradientType +"Gradient"+strokeSufx ;
-	lg += getGradientAngle(gradient) ;
-	lg += ">\n";
-	
+	var pxHint = isStroke ? PIXEL_HINTING : "";
+
+	var g = "<s:"+ gradientType +"Gradient"+strokeSufx ;
+	g += getGradientAngle(gradient) ;
+	g += pxHint;
+	g += _ND;
+
 	T.add();
 
-	lg += getGradientEntriesNodes(gradient);
+	g += getGradientEntriesNodes(gradient);
 
 	T.rm();
-	lg += "</s:"+ gradientType +"Gradient"+strokeSufx+">\n";
+	g += "</s:"+ gradientType +"Gradient"+strokeSufx+">\n";
 
-	log(lg);
-	return lg;
+	log(g);
+	return g;
 }
 
 function getGradientAngle(gradient){
@@ -442,15 +447,14 @@ if( setLocalPosition )
 exportSelection();
 
 /*
-NOW »»» refactoring
-*
 * TODO :
+* - export tabs
+* - spread / strength conversion
 * - multiples shadows and innerShadows
-* - multistates
+* - flex multistates
 * - lines, path, ellipse
 * - shadows distance +? angle
-* - multi-resolution
-* - gradient angle
+* - multi-resolution export ( fxg mobiles skins )
 * - radial gradient x, y, foalCenterPoint
 * - labelDisplay properties : color, fontSize
 * - img ( icons )
