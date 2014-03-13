@@ -2,10 +2,10 @@ skrx
 ====
 
 Sketch Plugin
-
+http://www.bohemiancoding.com/sketch
 ====
 
-Exports Sketch selected elements (for now only rectangles) to Apache Flex MXML or FXG
+Exports Sketch selected elements (for now only rectangles) to Apache Flex MXML or FXG, and copy it to clipboard.
 
 ##» 0.1.3
 - shadows , innerShadows (blur, color, alpha, strength)
