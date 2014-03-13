@@ -431,9 +431,10 @@ exportSelection();
 NOW »»» refactoring
 *
 * TODO :
+* - multiples shadows and innerShadows
+* - multistates
 * - lines, path, ellipse
 * - shadows distance +? angle
-* - multistates
 * - multi-resolution
 * - gradient angle
 * - radial gradient x, y, foalCenterPoint
