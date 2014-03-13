@@ -5,11 +5,11 @@
 *
 * allow you export MXML skin for Apache Flex spark Button
 *
-»»» 
+»»» 	
 *
 * TODO :
-* - shadows , innerShadows
 * - multistates
+* - shadows distance +? angle
 * - gradient angle
 * - radial gradient x, y, foalCenterPoint
 * - lines, path, ellipse
@@ -162,6 +162,9 @@ function getMXML(layer, setLocalPosition, localCenter){
 	var itemFills = [itemStyle fills];
 	itML += getFillNode( itemFills[0]);
 	T.rm();
+
+	// 
+	itML += getFilters( layer.style() );
 
 	// </
 	itML += "</s:Rect>";
@@ -347,6 +350,66 @@ function getGradientEntriesNodes(gradient){
 	log(entries);
 
 	return entries;
+}
+
+function getFilters( style )
+{
+	log("getFilters()...")
+
+	var f = "<s:filters>\n";
+
+	// shadows
+	var shadowString = getShadowBytype(style, true);
+	f += shadowString;
+
+	// innerShadows
+	var innerShadowString = getShadowBytype(style, false);
+	f += innerShadowString;
+
+	f += "</s:filters>\n";
+
+	return ( shadowString!= "" || innerShadowString != "") ? f : '';
+}
+
+function getShadowBytype( style , inner){
+	log("getShadowBytype()...");
+
+	var shadows = inner ? style.innerShadows() : style.shadows();
+	var shadow = shadows[0];
+	var s = "";
+
+	if( shadow ){
+		s += getShadow(shadow, inner);
+	}
+	return s;
+}
+
+
+/*
+<s:filters>
+	<s:DropShadowFilter blurY="2" blurX="2" color="#000000" alpha="0.5" strength="1" />
+</s:filters>
+*/
+function getShadow( shadow , inner)
+{
+	var s = "<s:DropShadowFilter ";
+
+	s += inner ? "inner=\"true\" " : "";
+	s +=  "blurX=\"" + shadow.blurRadius() + "\" ";
+	s +=  "blurY=\"" + shadow.blurRadius() + "\" ";
+
+	var distance = 0;
+	s +=  "distance=\"" + distance + "\" ";
+	s +=  "color=\"#" + shadow.color().hexValue() + "\" ";
+	s +=  "alpha=\"" + shadow.color().alpha() + "\" ";
+	s +=  "strength=\"" + shadow.spread() + "\" ";
+
+	// ANGLE » s +=  "distance=\"" + getShadowDistance + "\" ";
+	// ANGLE » s +=  "angle=\"" + getShadowAngle + "\" ";
+
+	s += _ND;
+
+	return s;
 }
 
 

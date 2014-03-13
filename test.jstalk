@@ -1,6 +1,86 @@
 // tests (ctrl alt cmd t)
+
+const ND = " >\n";
+const _ND = " />\n";
+
 log('notif start');
 
+var shadow = selection.firstObject().style().shadows().firstObject();
+var color = shadow.color();
+log("shadow » color" + color.hexValue() + " / alpha : " + color.alpha() + " / " + shadow.blurRadius() + " / " + shadow.offsetX()+ " / " + shadow.offsetY() );
+
+
+function getFilters( style )
+{
+	log("getFilters()...")
+
+	var f = "<s:filters>\n";
+
+	// shadows
+	f += getShadowBytype(style, true);
+	// innerShadows
+	f += getShadowBytype(style, false);
+
+	f += "</s:filters>\n";
+
+	return f;
+}
+
+function getShadowBytype( style , inner){
+	log("getShadowBytype()...");
+
+	var shadows = inner ? style.innerShadows() : style.shadows();
+	var shadow = shadows[0];
+	var s = "";
+
+	if( shadow ){
+		s += getShadow(shadow, inner);
+	}
+	return s;
+}
+
+
+/*
+<s:filters>
+	<s:DropShadowFilter blurY="2" blurX="2" color="#000000" alpha="0.5" strength="1" />
+</s:filters>
+*/
+function getShadow( shadow , inner)
+{
+	var s = "<s:DropShadowFilter ";
+
+	s += inner ? "inner=\"true\" " : "";
+
+	s +=  "blurX=\"" + shadow.blurRadius() + "\" ";
+	s +=  "blurY=\"" + shadow.blurRadius() + "\" ";
+
+	var distance = 0;
+	s +=  "distance=\"" + distance + "\" ";
+
+	s +=  "color=\"#" + shadow.color().hexValue() + "\" ";
+
+	s +=  "alpha=\"" + shadow.color().alpha() + "\" ";
+
+	s +=  "strength=\"" + shadow.spread() + "\" ";
+
+	// ANGLE » s +=  "distance=\"" + getShadowDistance + "\" ";
+	// ANGLE » s +=  "angle=\"" + getShadowAngle + "\" ";
+
+	s += _ND;
+
+	return s;
+}
+
+
+var filters = getFilters( selection.firstObject().style() );
+
+log("filters : \n" + filters );
+
+//var shadow = selection.firstObject().style().
+
+log('notif end');
+/*
+translation tests
 function getSelectionOriginRect(){
 	var rect = {};
 
@@ -70,8 +150,8 @@ var item2 = [layer2 frame];
 var translated2 = getItemRect( item2, true, r );
 log("translated2 : " + translated2.x + ',' + translated2.y);
 
-log('notif end');
 
+*/
 /*
 gradient studies
 var gradient = selection.firstObject().style().fills().firstObject().gradient();
