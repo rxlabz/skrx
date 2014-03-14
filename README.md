@@ -15,7 +15,7 @@ Basic generated skins examples : http://www.rxla.bz/skrx/
 
 _Generated MXML_
 
-![generated MXML](https://www.evernote.com/shard/s1/sh/d589dd78-c471-44a9-acbc-c6a45e32b578/c0dba2c75ecaccfc30bbfaf8b7f2b758/deep/0/SkrxSkinTest.mxml----Skrx----Sparx------DevLab-_Projects-RXLibz-Sparx----IntelliJ-IDEA-(Cardea)-IU-133.1081.png)
+![generated MXML](https://www.evernote.com/shard/s1/sh/ba087f43-65b0-4e79-b3ed-0b07230dfd18/e9c10aec4460134fc0aa3af5dc0c16ec/deep/0/SkrxSkinTest3.mxml.png)
 
 #### Release notes
 
