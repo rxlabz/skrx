@@ -28,13 +28,13 @@ _Generated MXML_
 - linearGradient Strokes 
 - multiple rectangles
 - Completed Alert
-- Radial gradient colors ( x y in next version )
+- Radial gradient colors ( fixme : focalCenter )
 - refactoring
 
 ##### 0.1.1
 - clipboard
 - setLocalPositionAlert
-- setLocalPosition : reset x y coordinates
+- setLocalPosition ( base x y position on selection area top left point )
 - linearGradient fill
 
 ##### 0.1
