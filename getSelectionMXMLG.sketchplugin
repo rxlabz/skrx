@@ -3,7 +3,7 @@
 /*
 * v0.1.3
 *
-* copy a MXML description of selected elements ( Apache Flex , Spark Skins )
+* copy a MXML description of selected elements to clipboard( Apache Flex , Spark Skins )
 *
 */
 
