@@ -443,7 +443,7 @@ const LOCAL_POS_TITLE = "Do you want to use the local coordinates of the selecti
 const LOCAL_POS_INFO = "In Local coordinates, elements positions are calculated from the topleft corner of the selection.";
 
 const FORMAT_SELECTION = "Please select your format";
-const FORMAT_SELECTION_HELP = "MXML contains \"s:\", the spark namespace. FXG has no namespace, it's compiled and can't be changed dynamically.";
+const FORMAT_SELECTION_HELP = "MXML contains \"s:\", the spark namespace. FXG has no namespace, it will be compiled in the swf document, and can't be changed dynamically.";
 
 /* ********************************
 * RUN
