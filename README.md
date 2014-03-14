@@ -11,11 +11,11 @@ Skrx ( ~skreecks ) exports a selection of elements (for now only the rectangles)
 
 Basic generated skins examples : http://www.rxla.bz/skrx/
 
-![Flex button skins examples made in sketch](https://www.evernote.com/shard/s1/sh/34378239-8a53-4f28-bff6-93c84bab5555/268d101ce5aab30110c881ad6eb46906/deep/0/skrx_buttons_examples1.sketch-et-Skrx-et-Sketch-Scripting-API---MSStyleBorder.png)
+![Flex button skins examples made in sketch](https://www.evernote.com/shard/s1/sh/95ab113d-6519-45c1-bd64-aa3113c0f748/914343535bd3811f7e27ff21635ad57f/deep/0/skrx_buttons_examples1.sketch.png)
 
 _Generated MXML_
 
-![generated MXML](https://www.evernote.com/shard/s1/sh/ba087f43-65b0-4e79-b3ed-0b07230dfd18/e9c10aec4460134fc0aa3af5dc0c16ec/deep/0/SkrxSkinTest3.mxml.png)
+![generated MXML](https://www.evernote.com/shard/s1/sh/4917067b-f20e-491a-aeb1-6c74b5b431f5/46ed3fbd5bad4e59aab10aaa745fcdb4/deep/0/SkrxSkinTest3.mxml.png)
 
 #### Release notes
 
