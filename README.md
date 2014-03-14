@@ -7,6 +7,8 @@ Skrx ( ~skreecks ) exports a selection of elements (for now only the rectangles)
 
 #### Example
 
+Basic generated skins examples : http://www.rxla.bz/skrx/
+
 ![Flex button skins examples made in sketch](https://www.evernote.com/shard/s1/sh/34378239-8a53-4f28-bff6-93c84bab5555/268d101ce5aab30110c881ad6eb46906/deep/0/skrx_buttons_examples1.sketch-et-Skrx-et-Sketch-Scripting-API---MSStyleBorder.png)
 
 _Generated MXML_
