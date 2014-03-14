@@ -7,9 +7,12 @@ Exports Sketch selected elements (for now only rectangles) to Apache Flex MXML o
 written in JSTalk ( http://jstalk.org ). For more informations : http://www.bohemiancoding.com/sketch/scripting
 
 ##### » 0.1.3
+- strokes thickness
 - strokes pixelHinting
 - gradient angle
 - shadows , innerShadows (blur, color, alpha, strength)
+- spread / strength conversion ( = spread + 1 )
+- tabs fixes
 
 ##### 0.1.2
 - local relative coordinates

@@ -213,15 +213,17 @@ function getStrokeNode(border){
 	log("getStrokeNode...");
 	var strokeChain = T.tab() + "<s:stroke>\n";
 	var borderType = [border fillType];
+	var thickness = [border thickness];
+	var weight = " weight=\""+ thickness +"\" " ;
 
 	T.add();
 
 	if( borderType == 0 ){
 		var borderColor = [border color];	
-		strokeChain += getSolidColorNode(borderColor, true);		
+		strokeChain += getSolidColorNode(borderColor, true, weight);		
 	} else if( borderType == 1 ){ // gradient
 		var gradient = [border gradient];
-		strokeChain += getGradientNode(gradient, true);		
+		strokeChain += getGradientNode(gradient, true, weight);		
 	} else 
 		log("!!! ERROR !!!")
 
@@ -243,10 +245,10 @@ function getFillNode(fill){
 
 	if( fillType == 0 ){ // solid color
 		var fillColor = [fill color];
-		fillChain += getSolidColorNode(fillColor, false);
+		fillChain += getSolidColorNode(fillColor, false, "");
 	} else if( fillType == 1 ){ // gradient
 		var gradient = [fill gradient];
-		fillChain += getGradientNode(gradient, false);		
+		fillChain += getGradientNode(gradient, false, "");		
 	} else 
 		log("!!! ERROR !!!");
 
@@ -257,10 +259,11 @@ function getFillNode(fill){
 	return fillChain;
 }
 
-function getSolidColorNode( color, isStroke ){
+function getSolidColorNode( color, isStroke, weight ){
 	var c = "";
 
 	var strokeSufx = isStroke ? 'Stroke' : "";
+	
 	var pxHint = isStroke ? PIXEL_HINTING : "";
 	var hexColor = [color hexValue];
 	log('hexValue : ' + hexColor);
@@ -268,6 +271,7 @@ function getSolidColorNode( color, isStroke ){
 	c += T.tab() + "<s:SolidColor"+strokeSufx+" color=\"#" + hexColor + "\" ";
 	c += getAlphaAttribute(color);
 	c += pxHint;
+	c += weight;
 	c += _ND;
 
 	return c;
@@ -283,7 +287,7 @@ function getSolidColorNode( color, isStroke ){
 *		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
 *	</s:LinearGradient[isStroke? "Stroke"]>
 */
-function getGradientNode(gradient, isStroke ){
+function getGradientNode(gradient, isStroke, weight ){
 	log("getGradientNode()...");
 	
 	
@@ -298,6 +302,7 @@ function getGradientNode(gradient, isStroke ){
 	var g = T.tab() + "<s:"+ gradientType +"Gradient"+strokeSufx ;
 	g += getGradientAngle(gradient) ;
 	g += pxHint;
+	g += weight;
 	g += ND;
 
 	g += getGradientEntriesNodes(gradient);
@@ -313,7 +318,7 @@ function getGradientAngle(gradient){
 	var p1 = gradient.from();
 	var p2 = gradient.to();
 	var angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
-	a += " angle=\""+ angle +"\" "
+	a += " rotation=\""+ angle +"\" "
 
 	return a;
 }
@@ -453,8 +458,6 @@ exportSelection();
 
 /*
 * TODO :
-* - export tabs
-* - spread / strength conversion
 * - multiples shadows and innerShadows
 * - flex multistates
 * - lines, path, ellipse
