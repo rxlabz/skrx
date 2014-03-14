@@ -131,7 +131,7 @@ function getMXML(layer, setLocalPosition, localCenter){
 	var rect = getItemRect(item, setLocalPosition, localCenter);
 
 	// <
-	var itML = "<s:Rect ";
+	var itML = "<" + NS + "Rect ";
 	itML += "width=\"" + rect.width + "\" " + "height=\"" + rect.height + "\" " + "x=\"" + rect.x + "\" " + "y=\"" + rect.y + "\" ";
 	
 	// styles
@@ -157,7 +157,7 @@ function getMXML(layer, setLocalPosition, localCenter){
 	T.rm();
 
 	// </
-	itML += "</s:Rect>\n\n";
+	itML += "</" + NS + "Rect>\n\n";
 
 	return itML;
 }
@@ -211,7 +211,7 @@ function getAlphaAttribute(color){
 
 function getStrokeNode(border){
 	log("getStrokeNode...");
-	var strokeChain = T.tab() + "<s:stroke>\n";
+	var strokeChain = T.tab() + "<" + NS + "stroke>\n";
 	var borderType = [border fillType];
 	var thickness = [border thickness];
 	var weight = " weight=\""+ thickness +"\" " ;
@@ -229,7 +229,7 @@ function getStrokeNode(border){
 
 	T.rm();
 
-	strokeChain += T.tab() + "</s:stroke>\n";
+	strokeChain += T.tab() + "</" + NS + "stroke>\n";
 
 	return strokeChain;
 }
@@ -238,7 +238,7 @@ function getStrokeNode(border){
 function getFillNode(fill){
 	log("getFillNode...");
 
-	var fillChain = T.tab() + "<s:fill>\n";
+	var fillChain = T.tab() + "<" + NS + "fill>\n";
 	var fillType = [fill fillType];
 
 	T.add();
@@ -254,7 +254,7 @@ function getFillNode(fill){
 
 	T.rm();
 	
-	fillChain += T.tab() + "</s:fill>\n";	
+	fillChain += T.tab() + "</" + NS + "fill>\n";	
 
 	return fillChain;
 }
@@ -268,7 +268,7 @@ function getSolidColorNode( color, isStroke, weight ){
 	var hexColor = [color hexValue];
 	log('hexValue : ' + hexColor);
 
-	c += T.tab() + "<s:SolidColor"+strokeSufx+" color=\"#" + hexColor + "\" ";
+	c += T.tab() + "<" + NS + "SolidColor"+strokeSufx+" color=\"#" + hexColor + "\" ";
 	c += getAlphaAttribute(color);
 	c += pxHint;
 	c += weight;
@@ -282,10 +282,10 @@ function getSolidColorNode( color, isStroke, weight ){
 * @param gradient MSGradient
 * @param isStroke Bool
 * exemple :
-*	<s:[isRadial?Radial:Linear]Gradient[isStroke?Stroke:] rotation="90" >
-*		<s:GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
-*		<s:GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
-*	</s:LinearGradient[isStroke? "Stroke"]>
+*	<" + NS + "[isRadial?Radial:Linear]Gradient[isStroke?Stroke:] rotation="90" >
+*		<" + NS + "GradientEntry color="#AAAAAA" ratio="0" alpha="1"  />
+*		<" + NS + "GradientEntry color="#FF0000" ratio="1" alpha=".5"  />
+*	</" + NS + "LinearGradient[isStroke? "Stroke"]>
 */
 function getGradientNode(gradient, isStroke, weight ){
 	log("getGradientNode()...");
@@ -299,7 +299,7 @@ function getGradientNode(gradient, isStroke, weight ){
 
 	var pxHint = isStroke ? PIXEL_HINTING : "";
 
-	var g = T.tab() + "<s:"+ gradientType +"Gradient"+strokeSufx ;
+	var g = T.tab() + "<" + NS + ""+ gradientType +"Gradient"+strokeSufx ;
 	g += getGradientAngle(gradient) ;
 	g += pxHint;
 	g += weight;
@@ -307,7 +307,7 @@ function getGradientNode(gradient, isStroke, weight ){
 
 	g += getGradientEntriesNodes(gradient);
 	
-	g += T.tab() + "</s:"+ gradientType +"Gradient"+strokeSufx+">\n";
+	g += T.tab() + "</" + NS + ""+ gradientType +"Gradient"+strokeSufx+">\n";
 
 	log(g);
 	return g;
@@ -336,7 +336,7 @@ function getGradientEntriesNodes(gradient){
 		entry = gradientEntries[i];
 		var entryColor = [[entry color] hexValue];
 		log("entry hex : " + entryColor);
-		entries += T.tab() +  "<s:GradientEntry color=\"#" + entryColor + "\" ";
+		entries += T.tab() +  "<" + NS + "GradientEntry color=\"#" + entryColor + "\" ";
 
 		var entryPos = [entry position];
 		log("entry pos : " + entryPos);
@@ -356,7 +356,7 @@ function getFilters( style )
 {
 	log("getFilters()...")
 
-	var f = T.tab() + "<s:filters>\n";
+	var f = T.tab() + "<" + NS + "filters>\n";
 
 	// shadows
 	var shadowString = getShadowBytype(style, true);
@@ -366,7 +366,7 @@ function getFilters( style )
 	var innerShadowString = getShadowBytype(style, false);
 	f += innerShadowString;
 
-	f += T.tab() + "</s:filters>\n";
+	f += T.tab() + "</" + NS + "filters>\n";
 
 	return ( shadowString!= "" || innerShadowString != "") ? f : '';
 }
@@ -386,14 +386,14 @@ function getShadowBytype( style , inner){
 
 
 /*
-<s:filters>
-	<s:DropShadowFilter blurY="2" blurX="2" color="#000000" alpha="0.5" strength="1" />
-</s:filters>
+<" + NS + "filters>
+	<" + NS + "DropShadowFilter blurY="2" blurX="2" color="#000000" alpha="0.5" strength="1" />
+</" + NS + "filters>
 */
 function getShadow( shadow , inner)
 {
 	T.add();
-	var s = T.tab() + "<s:DropShadowFilter ";
+	var s = T.tab() + "<" + NS + "DropShadowFilter ";
 
 	s += inner ? "inner=\"true\" " : "";
 	s +=  "blurX=\"" + shadow.blurRadius() + "\" ";
@@ -442,15 +442,25 @@ const _ND = " />\n";
 const LOCAL_POS_TITLE = "Do you want to use the local coordinates of the selection?";
 const LOCAL_POS_INFO = "In Local coordinates, elements positions are calculated from the topleft corner of the selection.";
 
+const FORMAT_SELECTION = "Please select your format";
+const FORMAT_SELECTION_HELP = "MXML contains \"s:\", the spark namespace. FXG has no namespace, it's compiled and can't be changed dynamically.";
+
 /* ********************************
 * RUN
 /* ******************************* */ 
+
+// FXG || MXML
+
+var hasSparkNS = Al.show( "MXML", "FXG", FORMAT_SELECTION, FORMAT_SELECTION_HELP);
+var NS = (hasSparkNS == 1) ? "s:" : "";
+
+log("NS : " + NS);
 
 // Alert : local coordinates ?
 var setLocalPosition = Al.show( "Yes", "No", LOCAL_POS_TITLE, LOCAL_POS_INFO);
 var localCenter = {x:0,y:0};
 
-if( setLocalPosition )
+if( setLocalPosition == 1 )
 	localCenter = getSelectionOriginRect();
 
 // EXPORT
