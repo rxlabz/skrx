@@ -145,7 +145,7 @@ function getMXML(layer, setLocalPosition, localCenter){
 
 	// stroke
 	var itemBorders = [itemStyle borders];
-	if( itemBorders.length() == 1 )	
+	if( (itemBorders.length() == 1) || !canExportState )	
 		itML += getStrokeNode( itemBorders[0]);
 	else
 		if(canExportState && NS == "s:")
@@ -153,7 +153,7 @@ function getMXML(layer, setLocalPosition, localCenter){
 
 	// fill
 	var itemFills = [itemStyle fills];
-	if( itemFills.length() == 1)
+	if( (itemFills.length() == 1) || !canExportState )
 		itML += getFillNode( itemFills[0]);
 	else if(canExportState && NS == "s:")
 		itML += getMultiStateFillNode( itemFills);
@@ -519,24 +519,33 @@ function exportSelection(){
 const ND = " >\n";
 const _ND = " />\n";
 
+const FORMAT_SELECTION = "Please select your format";
+const FORMAT_SELECTION_HELP = "MXML contains \"s:\", the spark namespace. FXG has no namespace, it will be compiled in the swf document, and can't be changed dynamically.";
+
+const STATE_SELECTION = "Do you want to export multiple fills and borders as states declination ? ";
+const STATE_SELECTION_HELP = "If you choose to export 'as states', each fill and border will be exported with corresponding states suffix ( 1 : up (default, not specified), 2 : .over, 3 : .down, 4 : .disabled )";
+
 const LOCAL_POS_TITLE = "Do you want to use the local coordinates of the selection?";
 const LOCAL_POS_INFO = "In Local coordinates, elements positions are calculated from the topleft corner of the selection.";
 
-const FORMAT_SELECTION = "Please select your format";
-const FORMAT_SELECTION_HELP = "MXML contains \"s:\", the spark namespace. FXG has no namespace, it will be compiled in the swf document, and can't be changed dynamically.";
 
 /* ********************************
 * RUN
 /* ******************************* */ 
 
-var canExportState = true;
+var canExportState = false;
 
 // FXG || MXML
 
 var hasSparkNS = Al.show( "MXML", "FXG", FORMAT_SELECTION, FORMAT_SELECTION_HELP);
-var NS = (hasSparkNS == 1) ? "s:" : "";
+var NS ;
 
-log("NS : " + NS);
+if( hasSparkNS == 1 ){
+	NS = "s:";
+	var stateChoice = Al.show( "Yes", "No", STATE_SELECTION, STATE_SELECTION_HELP);
+	canExportState = stateChoice == 1;
+}
+log("NS : " + NS + ' / canExportState : ' + canExportState);
 
 // Alert : local coordinates ?
 var setLocalPosition = Al.show( "Yes", "No", LOCAL_POS_TITLE, LOCAL_POS_INFO);
