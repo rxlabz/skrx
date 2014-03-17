@@ -20,7 +20,7 @@ _Generated MXML_
 #### Release notes
 
 ##### » 0.1.4
-- flex multistates
+- multi states fills and strokes export ( default / .over / .down / .disabled )
 
 ##### 0.1.3
 - export FXG
