@@ -19,7 +19,10 @@ _Generated MXML_
 
 #### Release notes
 
-##### » 0.1.3
+##### » 0.1.4
+- flex multistates
+
+##### 0.1.3
 - export FXG
 - strokes thickness
 - strokes pixelHinting
