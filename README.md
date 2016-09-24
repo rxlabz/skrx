@@ -1,11 +1,10 @@
 Skrx
 ====
-Sketch Plugin, http://www.bohemiancoding.com/sketch .
-Written in JSTalk ( http://jstalk.org ).
+[Sketch](https://www.sketchapp.com) Plugin, written in JSTalk ( http://jstalk.org ).
 
 Skrx ( ~skreecks ) exports a selection of elements (for now only the rectangles) to Apache Flex MXML or FXG description, and copy it to clipboard.
 
- For more informations about Sketch scripting : http://www.bohemiancoding.com/sketch/scripting
+ [Learn more about Sketch extensions/scripting](http://developer.sketchapp.com)
 
 #### Example
 
